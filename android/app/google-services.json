@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "831856509099",
+    "project_id": "trendora-228a2",
+    "storage_bucket": "trendora-228a2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831856509099:android:c99d42f4130d7415d7f7ee",
+        "android_client_info": {
+          "package_name": "com.example.firebase_mastery_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831856509099-d6jrfajvspiuu3ecl9adb0s1a6tq2r9l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.firebase_mastery_app",
+            "certificate_hash": "64cc8bf2285a1337859e8ca94461e7a6e8a603ac"
+          }
+        },
+        {
+          "client_id": "831856509099-9udfppvnfu0jhon2eqdrg8r9crutbqu4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuSiUsA6GkWjNgrwOLof_yPpj5nrYpEng"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831856509099-9udfppvnfu0jhon2eqdrg8r9crutbqu4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "831856509099-vlochopi2j2e5oogm5biv38opbhdam02.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.firebaseMasteryApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
