@@ -12,10 +12,7 @@ class CategoryModel {
   });
 
   // firestore factory (fixes error)
-  factory CategoryModel.fromFirestore(
-      String id,
-      Map<String, dynamic> data,
-      ) {
+  factory CategoryModel.fromFirestore(String id, Map<String, dynamic> data,) {
     return CategoryModel(
       id: id,
       name: data['name'] ?? '',
@@ -23,13 +20,4 @@ class CategoryModel {
       segment: data['segment'] ?? '',
     );
   }
-
-  // Map<String, dynamic> toMap() {
-  //   return {
-  //     'id': id,
-  //     'name': name,
-  //     'imageUrl': imageUrl,
-  //     'segment': segment,
-  //   };
-  // }
 }

@@ -1,3 +1,4 @@
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Address {
@@ -13,9 +14,8 @@ StateNotifierProvider<AddressNotifier, Address?>(
 );
 
 class AddressNotifier extends StateNotifier<Address?> {
-  AddressNotifier()
-      : super(
-    Address("Jaya Yadav", "Bangalore, Karnataka - 560001"),
+  AddressNotifier() : super(
+    Address("Neha Yadav", "Bangalore, Karnataka - 560001"),
   );
 
   void change(Address newAddress) {

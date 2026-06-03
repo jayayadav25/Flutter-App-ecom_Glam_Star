@@ -1,10 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/profile_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/models/user_model.dart';
 import '../../auth/providers/auth_providers.dart';
+import '../controllers/profile_controllers.dart';
+import '../data/profile_repository.dart';
+import '../widgets/profile_storage.dart';
 
+final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
-// Watch current Firebase user profile
+final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
+  return ProfileRepository( ref.read(firestoreProvider),
+  );
+});
+
 final currentUserProvider = StreamProvider<UserModel?>((ref) {
   final firebaseUser = ref.watch(authStateChangesProvider).asData?.value;
 
@@ -12,27 +20,10 @@ final currentUserProvider = StreamProvider<UserModel?>((ref) {
     return const Stream.empty();
   }
 
-  final repo = ref.read(profileRepositoryProvider);
-  return repo.watchUser(firebaseUser.uid);
+  return ref.read(profileRepositoryProvider).watchUser(firebaseUser.uid);
 });
 
+final profileControllerProvider = AsyncNotifierProvider<ProfileController, void>(ProfileController.new,);
 
-// Profile update controller
+final profileStorageServiceProvider = Provider((ref) => ProfileStorageService(),);
 
-final updateProfileProvider = Provider<UpdateProfileController>((ref) {
-  return UpdateProfileController(ref);
-});
-
-class UpdateProfileController {
-  final Ref ref;
-
-  UpdateProfileController(this.ref);
-
-  Future<void> updateProfile({
-    required String uid,
-    required Map<String, dynamic> data,
-  }) async {
-    final repo = ref.read(profileRepositoryProvider);
-    await repo.updateProfile(uid, data);
-  }
-}

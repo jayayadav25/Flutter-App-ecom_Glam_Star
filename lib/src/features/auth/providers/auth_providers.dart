@@ -12,10 +12,9 @@ final firebaseAuthProvider = Provider<fb.FirebaseAuth>((ref) {
 final googleSignInProvider = Provider<GoogleSignIn>((ref) {
   return GoogleSignIn(
     scopes: ['email'],
-    clientId: "831856509099-9udfppvnfu0jhon2eqdrg8r9crutbqu4.apps.googleusercontent.com",
+    serverClientId: "831856509099-9udfppvnfu0jhon2eqdrg8r9crutbqu4.apps.googleusercontent.com",
   );
 });
-
 
 // AuthRepository provider
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

@@ -1,4 +1,5 @@
 class EditorialImageData {
+
   final String image;
   final String? brand;
   final String? offer;

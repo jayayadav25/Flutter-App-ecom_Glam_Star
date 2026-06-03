@@ -60,7 +60,9 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<fb.User?> signInWithGoogle() async {
+
     final googleUser = await googleSignIn.signIn();
+
     if (googleUser == null) return null;
 
     final auth = await googleUser.authentication;
@@ -71,14 +73,13 @@ class FirebaseAuthRepository implements AuthRepository {
     );
 
     final cred = await firebaseAuth.signInWithCredential(credential);
+
     final user = cred.user;
     if (user == null) return null;
 
-    // Check if user already exists in Firestore
     final doc = await firestore.collection('users').doc(user.uid).get();
 
     if (!doc.exists) {
-      // Store Google account data
       await firestore.collection('users').doc(user.uid).set({
         'uid': user.uid,
         'name': user.displayName ?? "",

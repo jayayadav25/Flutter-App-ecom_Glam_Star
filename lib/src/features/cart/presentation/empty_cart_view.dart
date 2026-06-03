@@ -1,3 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_mastery_app/src/common/styles/text_styles.dart';
+import 'package:firebase_mastery_app/widgets/images.dart';
 import 'package:flutter/material.dart';
 
 class EmptyCartView extends StatelessWidget {
@@ -6,18 +9,34 @@ class EmptyCartView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const [
-          Icon(Icons.shopping_bag_outlined, size: 80, color: Colors.grey),
-          SizedBox(height: 16),
-          Text(
-            "Your cart is empty",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-          ),
-          SizedBox(height: 6),
-          Text("Add items to start shopping"),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              AppImages.shopping_bag,
+              //width: 100,
+            // height: 125,
+              fit: BoxFit.cover,
+            ),
+
+            const SizedBox(height: 24),
+            const Text(
+              'Oops! Shopping bag Is Empty',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 22,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Time to treat yourself.',
+              textAlign: TextAlign.center,
+              style: AppTextStyles.bodyText1
+            )
+          ],
+        ),
       ),
     );
   }

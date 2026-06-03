@@ -59,4 +59,14 @@ class LightProductModel {
     "has_image": hasImage,
     "slug": slug,
   };
+
+  // SEARCHABLE TEXT
+  String get searchableText => '''
+
+${title.toLowerCase()}
+${category.toLowerCase()}
+${subCategory.toLowerCase()}
+$slug
+
+''';
 }

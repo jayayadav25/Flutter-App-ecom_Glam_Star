@@ -1,7 +1,8 @@
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Filter state
 class SearchFilterState {
+
   final double minPrice;
   final double maxPrice;
   final String sortBy;
@@ -15,7 +16,7 @@ class SearchFilterState {
   factory SearchFilterState.initial() {
     return const SearchFilterState(
       minPrice: 0,
-      maxPrice: 10000,
+      maxPrice: 100000,
       sortBy: 'Relevance',
     );
   }
@@ -25,6 +26,7 @@ class SearchFilterState {
     double? maxPrice,
     String? sortBy,
   }) {
+
     return SearchFilterState(
       minPrice: minPrice ?? this.minPrice,
       maxPrice: maxPrice ?? this.maxPrice,
@@ -33,21 +35,30 @@ class SearchFilterState {
   }
 }
 
-// Filter provider
 final searchFilterProvider =
-StateNotifierProvider<SearchFilterNotifier, SearchFilterState>(
+StateNotifierProvider<SearchFilterNotifier,
+    SearchFilterState>(
       (ref) => SearchFilterNotifier(),
 );
 
 class SearchFilterNotifier extends StateNotifier<SearchFilterState> {
-  SearchFilterNotifier() : super(SearchFilterState.initial());
 
-  void updatePrice(double min, double max) {
-    state = state.copyWith(minPrice: min, maxPrice: max);
+  SearchFilterNotifier() : super(SearchFilterState.initial(),);
+
+  void updatePrice(
+      double min,
+      double max,
+      ) {
+    state = state.copyWith(
+      minPrice: min,
+      maxPrice: max,
+    );
   }
 
   void updateSort(String sort) {
-    state = state.copyWith(sortBy: sort);
+    state = state.copyWith(
+      sortBy: sort,
+    );
   }
 
   void reset() {

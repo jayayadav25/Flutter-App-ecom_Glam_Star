@@ -1,110 +1,95 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../../common/styles/colors.dart';
 import '../../../core/models/product_model.dart';
 
 class ProductImageCarousel extends StatefulWidget {
   final ProductModel product;
 
-  const ProductImageCarousel({super.key, required this.product});
+  const ProductImageCarousel({super.key, required this.product,});
 
   @override
   State<ProductImageCarousel> createState() => _ProductImageCarouselState();
 }
 
 class _ProductImageCarouselState extends State<ProductImageCarousel> {
-  int index = 0;
+  int activeIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     final images = widget.product.images;
 
-    return Stack(
+    return Column(
       children: [
-        SizedBox(
-          height: 520,
-          child: PageView.builder(
+        Hero(
+          tag: 'product_${widget.product.productId}',
+          child: CarouselSlider.builder(
             itemCount: images.length,
-            onPageChanged: (i) => setState(() => index = i),
-            itemBuilder: (_, i) {
-              final img = images[i];
-
+            options: CarouselOptions(
+              height: 500,
+              viewportFraction: 1,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  activeIndex = index;
+                });
+              },
+            ),
+            itemBuilder: (_, index, __) {
               return Stack(
                 children: [
-                  CachedNetworkImage(
-                    imageUrl: img.url,
-                    fit: BoxFit.cover,
-                    //width: double.infinity,
+                  CarouselSlider.builder(
+                    itemCount: images.length,
+                    options: CarouselOptions(
+                      height: 500,
+                      viewportFraction: 1,
+                      enlargeCenterPage: false,
+
+                      onPageChanged: (index, reason) {
+                        setState(() {
+                          activeIndex = index;
+                        });
+                      },
+                    ),
+
+                    itemBuilder: (_, index, __) {
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: CachedNetworkImage(
+                          imageUrl: images[index].url,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
                   ),
 
-                  // Info overlay image
-                  if (img.type == "info_overlay")
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(14),
-                        width: 260,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.25),
-                          borderRadius: BorderRadius.circular(14),
+                  // INDICATOR
+                  Positioned(
+                    bottom: 18,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: AnimatedSmoothIndicator(
+                        activeIndex: activeIndex,
+                        count: images.length,
+                        effect: ExpandingDotsEffect(
+                          dotHeight: 8,
+                          dotWidth: 8,
+                          spacing: 6,
+                          activeDotColor: AppColors.primaryBlack,
+                          dotColor: Colors.white.withOpacity(0.5),
                         ),
-                        child: _highlights(widget.product),
                       ),
                     ),
+                  ),
                 ],
               );
             },
           ),
         ),
-
-        // DOt indicator
-        Positioned(
-          bottom: 10,
-          left: 0,
-          right: 0,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              images.length,
-                  (i) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: index == i ? 10 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: index == i ? Colors.white : Colors.white54,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-              ),
-            ),
-          ),
-        ),
       ],
-    );
-  }
-
-  Widget _highlights(ProductModel p) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _item("Color", p.baseColour),
-        _item("Season", p.season),
-        _item("Usage", p.usage),
-        _item("Pack", "1 Pair"),
-        _item("Care", "Machine Wash"),
-      ],
-    );
-  }
-
-  Widget _item(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        "$label: $value",
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
     );
   }
 }

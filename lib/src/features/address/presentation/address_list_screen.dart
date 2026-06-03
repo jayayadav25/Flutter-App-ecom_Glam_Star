@@ -1,60 +1,72 @@
+import 'package:firebase_mastery_app/src/common/styles/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../provider/address_provider.dart';
+import '../widgets/address_card.dart';
+import '../widgets/address_empty_state.dart';
+import '../widgets/address_loading_shimmer.dart';
 
 class AddressListScreen extends ConsumerWidget {
   const AddressListScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref,) {
     final addressAsync = ref.watch(addressProvider);
-
     return Scaffold(
-      appBar: AppBar(title: const Text("Select Address")),
+      backgroundColor: const Color(0xFFF8F8F8),
+      appBar: AppBar(
+        backgroundColor: AppColors.cardColor,
+        title: const Text("My Addresses",),),
+      floatingActionButton: FloatingActionButton.extended(
+        backgroundColor: AppColors.primaryBlack,
+        foregroundColor: AppColors.whiteText,
+        onPressed: () {
+          context.push('/addresses/add');
+        },
+        label: const Text("Add Address"),
+        icon: const Icon(Icons.add),
+      ),
+
       body: addressAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text(e.toString())),
+        loading: () => const AddressLoadingShimmer(),
+
+        error: (e, _) => Center(child: Text('$e')),
         data: (addresses) {
           if (addresses.isEmpty) {
-            return Center(
-              child: TextButton.icon(
-                icon: const Icon(Icons.add),
-                label: const Text("Add Address"),
-                onPressed: () => context.push('/add-address'),
-              ),
+            return AddressEmptyState(
+              onAdd: () {
+                context.push('/addresses/add');
+              },
             );
           }
 
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(20),
             itemCount: addresses.length,
-            itemBuilder: (_, i) {
-              final a = addresses[i];
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
+            itemBuilder: (_, index) {
+              final address = addresses[index];
+              return AddressCard(
+                address: address,
 
-              return ListTile(
-                title: Text(a.name),
-                subtitle: Text("${a.house}, ${a.city}"),
-                trailing: IconButton(
-                  icon: const Icon(Icons.delete),
-                  onPressed: () async {
-                    final uid =
-                        FirebaseAuth.instance.currentUser!.uid;
-
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(uid)
-                        .collection('addresses')
-                        .doc(a.id)
-                        .delete();
-
-                    ref.invalidate(addressProvider);
-                  },
-                ),
                 onTap: () {
-                  ref.read(selectedAddressProvider.notifier).state = a;
+                  ref.read(selectedAddressProvider.notifier,).state = address;
                   context.pop();
+                },
+                onEdit: () {
+                  context.push('/addresses/edit', extra: address,);
+                },
+
+                onDelete: () async {
+                  final uid = ref.read(firebaseAuthProvider).currentUser!.uid;
+                  await ref.read(addressControllerProvider.notifier,)
+                      .deleteAddress(uid: uid, addressId: address.id,);
+                },
+                onSetDefault: () async {
+                  final uid = ref.read(firebaseAuthProvider).currentUser!.uid;
+                  await ref.read(addressControllerProvider.notifier,)
+                      .setDefaultAddress(uid: uid, addressId: address.id,);
                 },
               );
             },

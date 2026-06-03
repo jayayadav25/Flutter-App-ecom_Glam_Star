@@ -1,17 +1,14 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../domain/entities/banner_type.dart';
-import '../../data/repositories/banner_repository.dart';
+import '../../data/banner_repository.dart';
 import '../../widgets/banner_card.dart';
 import '../../widgets/banner_data.dart';
 
 class BannerCarousel extends StatefulWidget {
   final BannerType type;
 
-  const BannerCarousel({
-    super.key,
-    required this.type,
-  });
+  const BannerCarousel({super.key, required this.type,});
 
   @override
   State<BannerCarousel> createState() => _BannerCarouselState();
@@ -30,7 +27,6 @@ class _BannerCarouselState extends State<BannerCarousel> {
     _startAutoScroll();
   }
 
-  // Key fix
   @override
   void didUpdateWidget(covariant BannerCarousel oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -75,7 +71,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
     return Column(
       children: [
         SizedBox(
-          height: 250,
+          height: 200,
           child: PageView.builder(
             controller: _controller,
             itemCount: banners.length,
@@ -83,7 +79,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
               setState(() => _currentIndex = index);
             },
             itemBuilder: (_, index) {
-              return BannerCard(data: banners[index]);
+              return PremiumBannerCard(data: banners[index]);
             },
           ),
         ),

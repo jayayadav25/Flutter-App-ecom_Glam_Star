@@ -10,14 +10,34 @@ class DeliveryEtaWidget extends ConsumerWidget {
     final eta = ref.watch(deliveryEtaProvider);
 
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Colors.black, width: 0.1),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: ListTile(
-        leading: const Icon(Icons.local_shipping_outlined),
-        title: Text(eta.label),
-        subtitle: const Text("Free delivery on this order"),
+      child: Row(
+        children: [
+          const Icon(Icons.local_shipping_outlined),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  eta.label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                const Text(
+                  'Free delivery available',
+                )
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

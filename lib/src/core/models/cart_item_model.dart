@@ -1,37 +1,70 @@
-import 'package:firebase_mastery_app/src/core/models/product_model_mapper.dart';
+import 'package:flutter/foundation.dart';
 
-import 'product_model.dart';
-
+@immutable
 class CartItemModel {
-  final ProductModel product;
+  final String productId;
+  final String title;
+  final String image;
+  final double sellingPrice;
+  final double actualPrice;
   final int quantity;
+  final bool isSelected;
+  final DateTime updatedAt;
 
-  CartItemModel({
-    required this.product,
+  const CartItemModel({
+    required this.productId,
+    required this.title,
+    required this.image,
+    required this.sellingPrice,
+    required this.actualPrice,
     required this.quantity,
+    required this.isSelected,
+    required this.updatedAt,
   });
 
-  // MRP total
-  double get mrpTotal =>
-      (product.actualPrice * quantity).toDouble();
+  double get mrpTotal => actualPrice * quantity;
 
-  // Selling total
-  double get sellingTotal =>
-      (product.sellingPrice * quantity).toDouble();
+  double get sellingTotal => sellingPrice * quantity;
 
-  factory CartItemModel.fromMap(Map<String, dynamic> map) {
+  CartItemModel copyWith({
+    int? quantity,
+    bool? isSelected,
+  }) {
     return CartItemModel(
-      product: ProductModelMapper.fromMap(
-        Map<String, dynamic>.from(map['product']),
-      ),
-      quantity: map['quantity'] ?? 1,
+      productId: productId,
+      title: title,
+      image: image,
+      sellingPrice: sellingPrice,
+      actualPrice: actualPrice,
+      quantity: quantity ?? this.quantity,
+      isSelected: isSelected ?? this.isSelected,
+      updatedAt: DateTime.now(),
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'product': product.toMap(),
+      'productId': productId,
+      'title': title,
+      'image': image,
+      'sellingPrice': sellingPrice,
+      'actualPrice': actualPrice,
       'quantity': quantity,
+      'isSelected': isSelected,
+      'updatedAt': updatedAt.toIso8601String(),
     };
+  }
+
+  factory CartItemModel.fromMap(Map<String, dynamic> map) {
+    return CartItemModel(
+      productId: map['productId'],
+      title: map['title'],
+      image: map['image'],
+      sellingPrice: (map['sellingPrice'] as num).toDouble(),
+      actualPrice: (map['actualPrice'] as num).toDouble(),
+      quantity: map['quantity'],
+      isSelected: map['isSelected'] ?? true,
+      updatedAt: DateTime.parse(map['updatedAt']),
+    );
   }
 }

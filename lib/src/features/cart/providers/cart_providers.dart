@@ -1,82 +1,223 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/models/cart_item_model.dart';
-import '../../../core/models/product_model.dart';
-import '../data/cart_repository.dart';
-import 'cart_selection_provider.dart';
+import '../data/cart_repository_impl.dart';
+import '../data_sources/cart_local_datasources.dart';
+import '../data_sources/cart_remote_datasource.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+/// LOCAL DATASOURCE
+final cartLocalDataSourceProvider = Provider<CartLocalDataSource>((ref) {
+  return CartLocalDataSource();
+});
+
+/// REMOTE DATASOURCE
+final cartRemoteDataSourceProvider = Provider<CartRemoteDataSource>((ref) {
+  return CartRemoteDataSource(
+    firestore: FirebaseFirestore.instance,
+    auth: FirebaseAuth.instance,
+  );
+});
+
+/// REPOSITORY
+final cartRepositoryProvider = Provider<CartRepositoryImpl>((ref) {
+  return CartRepositoryImpl(
+    local: ref.read(cartLocalDataSourceProvider),
+    remote: ref.read(cartRemoteDataSourceProvider),
+  );
+});
 
 class CartNotifier extends AsyncNotifier<List<CartItemModel>> {
-  late CartRepository _repo;
+  CartRepositoryImpl get repository =>
+      ref.read(cartRepositoryProvider);
 
   @override
   Future<List<CartItemModel>> build() async {
-    _repo = CartRepository();
-    await _repo.init();
-    return _repo.getCart();
+    return await repository.getCart();
   }
 
-  /// ✅ ADD TO CART (NO MANUAL SELECT HERE)
-  void addToCart(ProductModel product) async {
-    await _repo.add(product);
-    state = AsyncData(_repo.getCart());
+  Future<void> addToCart(CartItemModel item) async {
+    try {
+      final currentItems = state.value ?? [];
+
+      // Optimistic update
+      state = AsyncData([
+        ...currentItems,
+        item,
+      ]);
+
+      await repository.addToCart(item);
+
+      state = AsyncData(
+        await repository.getCart(),
+      );
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
-  void removeFromCart(String id) async {
-    await _repo.remove(id);
-    state = AsyncData(_repo.getCart());
+  Future<void> removeFromCart(String productId) async {
+    try {
+      await repository.removeFromCart(productId);
+
+      state = AsyncData(
+        await repository.getCart(),
+      );
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
-  void increment(String id) async {
-    await _repo.increment(id);
-    state = AsyncData(_repo.getCart());
+  Future<void> increment(String productId) async {
+    try {
+      await repository.increment(productId);
+
+      state = AsyncData(
+        await repository.getCart(),
+      );
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
-  void decrement(String id) async {
-    await _repo.decrement(id);
-    state = AsyncData(_repo.getCart());
+  Future<void> decrement(String productId) async {
+    try {
+      await repository.decrement(productId);
+
+      state = AsyncData(
+        await repository.getCart(),
+      );
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 
   Future<void> clearCart() async {
-    await _repo.clear();
-    state = const AsyncData([]);
+    try {
+      await repository.clearCart();
+
+      state = const AsyncData([]);
+    } catch (e, st) {
+      state = AsyncError(e, st);
+    }
   }
 }
 
-/// MAIN PROVIDER
 final cartProvider =
 AsyncNotifierProvider<CartNotifier, List<CartItemModel>>(
   CartNotifier.new,
 );
 
-/// TOTAL CART PRICE
-final cartTotalProvider = Provider<double>((ref) {
-  final cart = ref.watch(cartProvider).value ?? [];
-  double total = 0;
 
-  for (final item in cart) {
-    total += item.product.sellingPrice * item.quantity;
-  }
-  return total;
-});
 
-/// CART ITEM COUNT (BADGE)
-final cartCountProvider = Provider<int>((ref) {
-  final cartAsync = ref.watch(cartProvider);
 
-  return cartAsync.maybeWhen(
-    data: (items) =>
-        items.fold(0, (sum, item) => sum + item.quantity),
-    orElse: () => 0,
-  );
-});
 
-/// CHECK IF PRODUCT IS IN CART
-final isInCartProvider =
-Provider.family<bool, String>((ref, productId) {
-  final cartAsync = ref.watch(cartProvider);
 
-  return cartAsync.maybeWhen(
-    data: (items) =>
-        items.any((i) => i.product.productId == productId),
-    orElse: () => false,
-  );
-});
+
+
+
+
+
+
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:flutter_riverpod/flutter_riverpod.dart';
+//
+// import '../../../core/models/cart_item_model.dart';
+// import '../data/cart_repository_impl.dart';
+// import '../data_sources/cart_local_datasources.dart';
+// import '../data_sources/cart_remote_datasource.dart';
+//
+// // LOCAL DATASOURCE
+// final cartLocalDataSourceProvider = Provider<CartLocalDataSource>((ref) {
+//   return CartLocalDataSource();
+// });
+//
+// // REMOTE DATASOURCE
+// final cartRemoteDataSourceProvider = Provider<CartRemoteDataSource>((ref) {
+//   return CartRemoteDataSource(
+//     firestore: FirebaseFirestore.instance,
+//     auth: FirebaseAuth.instance,
+//   );
+// });
+//
+// // REPOSITORY
+// final cartRepositoryProvider = Provider<CartRepositoryImpl>((ref) {
+//   return CartRepositoryImpl(
+//     local: ref.read(cartLocalDataSourceProvider),
+//     remote: ref.read(cartRemoteDataSourceProvider),
+//   );
+// });
+//
+// class CartNotifier extends AsyncNotifier<List<CartItemModel>> {
+//   late final CartRepositoryImpl repository;
+//
+//   @override
+//   Future<List<CartItemModel>> build() async {
+//     repository = ref.read(
+//       cartRepositoryProvider,
+//     );
+//     return repository.getCart();
+//   }
+//
+//   Future<void> addToCart(CartItemModel item) async {
+//     try {
+//       final currentItems = state.value ?? [];
+//       // OPTIMISTIC UPDATE
+//       state = AsyncData([
+//         ...currentItems,
+//         item,
+//       ]);
+//       await repository.addToCart(item);
+//       final updated = await repository.getCart();
+//       state = AsyncData(updated);
+//     } catch (e, st) {
+//       state = AsyncError(e, st);
+//     }
+//   }
+//
+//   Future<void> removeFromCart(String productId) async {
+//     try {
+//       await repository.removeFromCart(productId);
+//       final updated = await repository.getCart();
+//       state = AsyncData(updated);
+//     } catch (e, st) {
+//       state = AsyncError(e, st);
+//     }
+//   }
+//
+//   Future<void> increment(String productId) async {
+//     try {
+//       await repository.increment(productId);
+//       final updated = await repository.getCart();
+//       state = AsyncData(updated);
+//     } catch (e, st) {
+//       state = AsyncError(e, st);
+//     }
+//   }
+//
+//   Future<void> decrement(String productId) async {
+//     try {
+//       await repository.decrement(productId);
+//       final updated = await repository.getCart();
+//       state = AsyncData(updated);
+//     } catch (e, st) {
+//       state = AsyncError(e, st);
+//     }
+//   }
+//
+//   Future<void> clearCart() async {
+//     try {
+//       await repository.clearCart();
+//       state = const AsyncData([]);
+//     } catch (e, st) {
+//       state = AsyncError(e, st);
+//     }
+//   }
+// }
+//
+// final cartProvider = AsyncNotifierProvider<CartNotifier, List<CartItemModel>>(
+//   CartNotifier.new,
+// );

@@ -38,3 +38,5 @@ const Map<String, List<String>> subcategoryAliases = {
   "sandals": ["sandal", "sandals", "flipflop", "flipflops"],
   "bags": ["bag", "bags", "backpack", "backpacks"],
 };
+
+

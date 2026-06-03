@@ -1,13 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/applied_coupon.dart';
-import 'cart_providers.dart';
 
-class AppliedCouponNotifier extends StateNotifier<AppliedCoupon?> {
-  AppliedCouponNotifier(this.ref) : super(null);
 
-  final Ref ref;
+class CouponNotifier extends StateNotifier<AppliedCouponModel?> {
+  CouponNotifier() : super(null);
 
-  void applyCoupon(AppliedCoupon coupon) {
+  void applyCoupon(AppliedCouponModel coupon) {
     state = coupon;
   }
 
@@ -16,19 +14,7 @@ class AppliedCouponNotifier extends StateNotifier<AppliedCoupon?> {
   }
 }
 
-final appliedCouponProvider =
-StateNotifierProvider<AppliedCouponNotifier, AppliedCoupon?>(
-      (ref) {
-    final notifier = AppliedCouponNotifier(ref);
-
-    /// Auto-clear coupon when cart is empty
-    ref.listen(cartProvider, (prev, next) {
-      final items = next.value ?? [];
-      if (items.isEmpty) {
-        notifier.clearCoupon();
-      }
-    });
-
-    return notifier;
-  },
+final couponProvider =
+StateNotifierProvider<CouponNotifier, AppliedCouponModel?>(
+      (ref) => CouponNotifier(),
 );

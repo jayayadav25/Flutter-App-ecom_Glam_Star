@@ -1,26 +1,20 @@
-import 'package:firebase_mastery_app/src/features/products/widgets/light_products_mapper.dart';
+import 'package:firebase_mastery_app/src/common/styles/text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/models/light_product_model.dart';
+import '../../../core/models/wishlist_item_model.dart';
 import '../../wishlist/provider/wishlist_providers.dart';
 
 class LightProductCard extends ConsumerWidget {
   final LightProductModel product;
-
   const LightProductCard({super.key, required this.product});
-
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isWishlisted = ref.watch(isWishlistedProvider(product.productId));
-
     final discountPercent = product.actualPrice > product.sellingPrice
-        ? (((product.actualPrice - product.sellingPrice) /
-        product.actualPrice) *
-        100)
-        .round()
-        : 0;
+        ? (((product.actualPrice - product.sellingPrice) / product.actualPrice) * 100).round() : 0;
 
     return GestureDetector(
       onTap: () {
@@ -41,9 +35,8 @@ class LightProductCard extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
-              height: 159,
-              width: double.infinity,
+            Expanded(
+              flex: 11,
               child: Container(
                 color:Colors.white,
                 child: Stack(
@@ -51,7 +44,6 @@ class LightProductCard extends ConsumerWidget {
                     Image.network(
                       product.thumbnail,
                       fit: BoxFit.contain,
-                      height: 200,
                       width: double.infinity,
                       errorBuilder: (_, __, ___) =>
                       const Center(child: Icon(Icons.image_not_supported)),
@@ -62,11 +54,19 @@ class LightProductCard extends ConsumerWidget {
                       top: 8,
                       right: 8,
                       child: GestureDetector(
-                        onTap: () {
-
-                            ref
-                                .read(wishlistProvider.notifier)
-                                .toggle(product.toProductModel());
+                        onTap: () async {
+                          await ref.read(wishlistProvider.notifier,).toggleWishlist(
+                            item: WishlistItemModel(
+                              productId: product.productId,
+                              title: product.title,
+                              image: product.thumbnail.toString(),
+                              sellingPrice: product.sellingPrice.toDouble(),
+                              actualPrice: product.actualPrice.toDouble(),
+                              discount: product.discount,
+                              rating: product.averageRating.toDouble(),
+                              addedAt: DateTime.now(),
+                            ),
+                          );
                         },
                         child: Container(
                           decoration: const BoxDecoration(
@@ -77,7 +77,7 @@ class LightProductCard extends ConsumerWidget {
                           child: Icon(
                             isWishlisted
                                 ? Icons.favorite
-                                : Icons.favorite_border,
+                                : Icons.favorite_outline,
                             color:
                             isWishlisted ? Colors.red : Colors.black,
                             size: 18,
@@ -91,61 +91,56 @@ class LightProductCard extends ConsumerWidget {
             ),
 
             // Details
-            SizedBox(
-              height: 95,
+            Expanded(
+              flex: 6,
               child: Padding(
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    Text(
-                      product.title,
+                    Text("GlamStar",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: AppTextStyles.productBrand
+
                     ),
 
-                    const Spacer(),
+                    Text(product.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTextStyles.productTitle
+                    ),
 
                     // Price Row
                     Row(
                       children: [
-                        Text(
-                          "₹${product.sellingPrice}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Text("₹${product.sellingPrice}",
+                          style: AppTextStyles.productTitle
                         ),
                         const SizedBox(width: 6),
                         if (product.actualPrice >
                             product.sellingPrice)
+                          Flexible(
+                            child: Text(
+                              "₹${product.actualPrice}",
+                              style: AppTextStyles.oldPrice
+                            ),
+                          ),
+                        SizedBox(width:10),
+                        if (discountPercent > 0)
                           Text(
-                            "₹${product.actualPrice}",
+                            "$discountPercent% OFF",
                             style: const TextStyle(
                               fontSize: 12,
-                              color: Colors.grey,
-                              decoration:
-                              TextDecoration.lineThrough,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                       ],
                     ),
 
                     // Discount
-                    if (discountPercent > 0)
-                      Text(
-                        "$discountPercent% OFF",
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.pink,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
+
                   ],
                 ),
               ),

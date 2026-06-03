@@ -1,10 +1,4 @@
-// lib/src/services/analytics_service.dart
-
 import 'package:firebase_analytics/firebase_analytics.dart';
-
-
-// Analytics services
-// Tracks user events across the Trendora app
 
 class AnalyticsService {
   final FirebaseAnalytics _analytics;

@@ -1,8 +1,10 @@
 class AppImages {
   AppImages._(); // prevents instantiation
 
-  static const String placeholder = "assets/images/placeholder.png";
-
+  static const String placeholder = "assets/placeholder.png";
+  static const String shopping_bag = "assets/shopping_bag.png";
+  static const String add_address = "assets/add_address.png";
+  static const String ordernow = "assets/ordernow.png";
   // ICONS
   static const String menIcon = 'assets/images/icons/men.png';
   static const String womenIcon = 'assets/images/icons/women.png';
@@ -10,6 +12,12 @@ class AppImages {
 
 
   // BANNERS
+  static const String banner_1 = 'assets/images/banners/banner_1.jpg';
+  static const String banner_2 = 'assets/images/banners/banner_2.jpg';
+  static const String banner_3 = 'assets/images/banners/banner_3.jpg';
+  static const String banner_4 = 'assets/images/banners/banner_4.jpg';
+  static const String banner_5 = 'assets/images/banners/banner_5.jpg';
+  static const String banner_6 = 'assets/images/banners/banner_6.jpg';
   static const String home_banner_1 = 'assets/images/banners/home_banner_1.jpg';
   static const String home_banner_2 = 'assets/images/banners/home_banner_2.jpg';
   static const String home_banner_3 = 'assets/images/banners/home_banner_3.jpg';
@@ -43,6 +51,8 @@ class AppImages {
 
   // SUBCATEGORIES
   static const String handbag = 'assets/images/sub_categories/handbag.png';
+  static const String saree = 'assets/images/sub_categories/saree.png';
+  static const String kurta = 'assets/images/sub_categories/kurta.jpg';
   static const String men_jeans = 'assets/images/sub_categories/men_jeans.png';
   static const String men_shoes = 'assets/images/sub_categories/men_shoes.png';
   static const String men_shirt = 'assets/images/sub_categories/men_shirt.png';
@@ -132,7 +142,8 @@ class AppImages {
   static const String women13 = 'assets/images/editorial_images/women13.jpg';
   static const String women14 = 'assets/images/editorial_images/women14.png';
   static const String women15 = 'assets/images/editorial_images/women15.jpg';
-
+  static const String women16 = 'assets/images/editorial_images/women16.jpg';
+  static const String jewelry = 'assets/images/editorial_images/jewelry.jpg';
   static const String women_dress1 = 'assets/images/editorial_images/women_dress1.png';
   static const String women_dress2 = 'assets/images/editorial_images/women_dress2.png';
   static const String women_dress3 = 'assets/images/editorial_images/women_dress3.png';

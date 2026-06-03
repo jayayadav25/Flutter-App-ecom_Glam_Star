@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/product_model.dart';
 
-final savedForLaterProvider =
-StateNotifierProvider<SavedForLaterNotifier, List<ProductModel>>(
+final savedForLaterProvider = StateNotifierProvider<SavedForLaterNotifier, List<ProductModel>>(
       (ref) => SavedForLaterNotifier(),
 );
 

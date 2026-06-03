@@ -1,141 +1,137 @@
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../products/widgets/prduct_debug.dart';
+import '../../../common/styles/app_button_styles.dart';
+import '../../auth/providers/auth_controller.dart';
+import '../../cart/providers/cart_providers.dart';
+import '../../orders/providers/order_history_provider.dart';
+import '../../wishlist/provider/wishlist_providers.dart';
 import '../providers/profile_providers.dart';
+import '../widgets/profile_header.dart';
+import '../widgets/profile_tile.dart';
 
 class ProfileScreen extends ConsumerWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+  const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context, WidgetRef ref,) {
     final userAsync = ref.watch(currentUserProvider);
+    return Scaffold(
+      backgroundColor: const Color(0xFFF7F7F7),
+      body: SafeArea(
+        child: userAsync.when(
+          loading: () => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          error: (e, _) => Center(child: Text('$e')),
+          data: (user) {
+            if (user == null) {
+              return const Center(
+                child: Text("No User"),
+              );
+            }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 70), // space below search bar
-      child: userAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, _) => Center(child: Text('Error: $err')),
-        data: (user) {
-          if (user == null) {
-            return const Center(child: Text("No user data available"));
-          }
+            return SingleChildScrollView(
+              physics: NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  ProfileHeader(
+                    user: user,
+                    onEdit: () {
+                      context.push('/edit-profile', extra: user,);
+                    },
+                  ),
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.grey.shade300,
-                      backgroundImage:
-                      user.profilePic != null ? NetworkImage(user.profilePic!) : null,
-                      child: user.profilePic == null
-                          ? const Icon(Icons.person, size: 40, color: Colors.white)
-                          : null,
-                    ),
-                    const SizedBox(width: 20),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(user.name,
-                            style: const TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold)),
-                        Text(user.email,
-                            style: const TextStyle(color: Colors.grey)),
-                      ],
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 10),
+                  ProfileTile(
+                    title: 'Wishlist',
+                    icon: Icons.favorite,
+                    onTap: () {
+                      context.push('/wishlist',);
+                    },
+                  ),
 
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const ProductDebugScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Open Product Debug"),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.admin_panel_settings_outlined),
-                  title: const Text('Admin Dashboard'),
-                  onTap: () => context.push('/admin'),
-                ),
-                _menuItem(
-                  icon: Icons.edit,
-                  label: "Edit Profile",
-                  onTap: () => context.push('/edit-profile', extra: user),
-                ),
+                  const SizedBox(height: 10),
+                  ProfileTile(
+                    title: 'Saved Addresses',
+                    icon: Icons.location_on,
+                    onTap: () {
+                      context.push('/addresses',);
+                    },
+                  ),
 
-                _menuItem(
-                  icon: Icons.shopping_bag,
-                  label: "My Orders",
-                  onTap: () => context.push('/orders'),
-                ),
+                  const SizedBox(height: 10),
 
-                _menuItem(
-                  icon: Icons.favorite,
-                  label: "My Wishlist",
-                  onTap: () => context.push('/wishlist'),
-                ),
+         // settings
+           // const SizedBox(height: 14),
+           //  ProfileTile(
+           //    title: 'Notifications',
+           //    icon: Icons.notifications_none,
+           //    trailing: Switch( value: true,
+           //      onChanged: (_) {},
+           //    ),
+           //    onTap: () {},
+           //  ),
+            // const SizedBox(height: 16),
 
-                _menuItem(
-                  icon: Icons.color_lens,
-                  label: "Change Theme",
-                  onTap: () => context.push('/theme-switcher'),
-                ),
-
-                _menuItem(
-                  icon: Icons.logout,
-                  label: "Logout",
-                  onTap: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.remove('logged_in');
-                    await FirebaseAuth.instance.signOut();
-                    if (context.mounted) context.go('/login');
-
-
-                  },
-                ),
-              ],
+            // ProfileTile(
+            //   title: 'Dark Mode',
+            //   icon: Icons.dark_mode_outlined,
+            //   trailing: Switch(
+            //     value: false,
+            //     onChanged: (_) {},
+            //   ),
+            //   onTap: () => context.push('/theme-switcher'),
+            // ),
+           // const SizedBox(height: 16),
+            ProfileTile(
+              title: 'Privacy Policy',
+              icon: Icons.privacy_tip_outlined,
+              onTap: () {},
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _menuItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          children: [
-            Icon(icon, size: 26, color: Colors.black87),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(label,
-                  style:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+            const SizedBox(height: 10),
+            ProfileTile(
+              title: 'Terms & Conditions',
+              icon: Icons.description_outlined,
+              onTap: () {},
             ),
-            const Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey),
-          ],
+            //const SizedBox(height: 40),
+                   const SizedBox(height: 16),
+                  // Logout button
+             SizedBox(
+              width: double.infinity,
+              height: 56,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  // CLEAR WISHLIST
+                  await ref.read(wishlistProvider.notifier).clearWishlist();
+                  // INVALIDATE PROVIDERS
+                  ref.invalidate(wishlistProvider);
+                  ref.invalidate(cartProvider);
+                  ref.invalidate(userOrdersProvider);
+                  await ref.read(authControllerProvider.notifier).signOut();
+                  if (context.mounted) {
+                    context.go('/login');
+                  }
+                },
+                style: AppButtonStyles.primaryButton,
+                icon: const Icon(Icons.logout, color: Colors.white,),
+                label: const Text('Logout',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight:
+                    FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+                ],
+              ),
+            );
+          },
         ),
       ),
     );

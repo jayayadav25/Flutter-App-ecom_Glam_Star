@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/sub_category_type.dart';
 import '../../providers/sub_category_provider.dart';
-import '../../data/repositories/sub_category_repository.dart';
+import '../../data/sub_category_repository.dart';
 
 class SubCategoryScreen extends ConsumerWidget {
   final SubCategoryType type;

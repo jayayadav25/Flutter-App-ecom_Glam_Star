@@ -1,37 +1,33 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../services/firestore_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/models/user_model.dart';
-import '../../../core/providers/firebase_providers.dart';
 
 class ProfileRepository {
-  final FirestoreService _firestore;
-  static const String usersCollection = 'users';
+  final FirebaseFirestore firestore;
 
-  ProfileRepository(this._firestore);
+  ProfileRepository(this.firestore);
 
-  // watch user document
   Stream<UserModel?> watchUser(String uid) {
-    return _firestore.watchDocument(
-      collectionPath: usersCollection,
-      docId: uid,
-    ).map((doc) {
+    return firestore
+        .collection('users')
+        .doc(uid)
+        .snapshots()
+        .map((doc) {
       if (!doc.exists) return null;
-      return UserModel.fromMap(doc.data()!, doc.id);
+
+      return UserModel.fromMap(
+        doc.data()!,
+        doc.id,
+      );
     });
   }
 
-  // Update user data
-  Future<void> updateProfile(String uid, Map<String, dynamic> data) async {
-    await _firestore.updateDocument(
-      collectionPath: usersCollection,
-      docId: uid,
-      data: data,
-    );
+  Future<void> updateProfile({
+    required String uid,
+    required Map<String, dynamic> data,
+  }) async {
+    await firestore
+        .collection('users')
+        .doc(uid)
+        .update(data);
   }
 }
-
-// Missing provider
-final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
-  final firestore = ref.read(firestoreServiceProvider);
-  return ProfileRepository(firestore);
-});

@@ -1,46 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'cart_providers.dart';
 
 class CartSelectionNotifier extends StateNotifier<Set<String>> {
-  CartSelectionNotifier(this.ref) : super(<String>{}) {
-    ref.listen(cartProvider, (prev, next) {
-      final items = next.value ?? [];
+  CartSelectionNotifier() : super({});
 
-      /// ✅ CONVERT productId (int) → String
-      final cartIds = items
-          .map((e) => e.product.productId.toString())
-          .toSet();
+  void toggle(String productId) {
+    final updated = {...state};
 
-      // 🟥 Cart empty → clear selection
-      if (items.isEmpty) {
-        state = {};
-        return;
-      }
+    if (updated.contains(productId)) {
+      updated.remove(productId);
+    } else {
+      updated.add(productId);
+    }
 
-      // 🟢 FIRST LOAD AFTER APP START
-      if ((prev?.value ?? []).isEmpty && state.isEmpty) {
-        state = {...cartIds};
-        return;
-      }
-
-      // 🟢 NEW ITEMS ADDED → auto-select only them
-      final newlyAdded = cartIds.difference(state);
-      if (newlyAdded.isNotEmpty) {
-        state = {...state, ...newlyAdded};
-      }
-
-      // 🟥 REMOVE SELECTION FOR REMOVED ITEMS
-      state = state.intersection(cartIds);
-    });
+    state = updated;
   }
 
-  final Ref ref;
+  void selectAll(List<String> ids) {
+    state = ids.toSet();
+  }
 
-  /// Checkbox toggle (manual control)
-  void toggle(String productId) {
-    final s = {...state};
-    s.contains(productId) ? s.remove(productId) : s.add(productId);
-    state = s;
+  void clear() {
+    state = {};
   }
 
   bool isSelected(String productId) {
@@ -50,5 +30,5 @@ class CartSelectionNotifier extends StateNotifier<Set<String>> {
 
 final cartSelectionProvider =
 StateNotifierProvider<CartSelectionNotifier, Set<String>>(
-      (ref) => CartSelectionNotifier(ref),
+      (ref) => CartSelectionNotifier(),
 );

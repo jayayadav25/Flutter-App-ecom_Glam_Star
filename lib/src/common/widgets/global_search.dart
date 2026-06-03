@@ -1,11 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-import '../../features/search/presentation/search_filter_screen.dart';
-import '../../features/search/provider/search_provider.dart';
 import '../../features/search/presentation/search_screen.dart';
-import '../../features/search/presentation/search_suggestion_screen.dart';
-import '../../features/search/presentation/voice_search_screen.dart';
 
 class GlobalSearchBar extends ConsumerStatefulWidget {
   const GlobalSearchBar({super.key});
@@ -27,7 +24,6 @@ class _GlobalSearchBarState extends ConsumerState<GlobalSearchBar>
   void initState() {
     super.initState();
     _speech = stt.SpeechToText();
-
     _micController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 350),
@@ -44,31 +40,6 @@ class _GlobalSearchBarState extends ConsumerState<GlobalSearchBar>
     super.dispose();
   }
 
-  Future<void> _startListening() async {
-    bool available = await _speech.initialize();
-    if (!available) return;
-
-    setState(() => isListening = true);
-    _micController.repeat(reverse: true);
-
-    _speech.listen(
-      onResult: (result) {
-        final text = result.recognizedWords;
-
-        // Update query in provider
-        ref.read(searchQueryProvider.notifier).state = text;
-
-        // Add to history
-       // ref.read(searchHistoryProvider.notifier).add(text);
-
-        // Immediately open search screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => const SearchScreen()),
-        );
-      },
-    );
-  }
 
   void _stopListening() {
     _speech.stop();
@@ -99,7 +70,6 @@ class _GlobalSearchBarState extends ConsumerState<GlobalSearchBar>
           children: [
             // Search icon
             const Icon(Icons.search, color: Colors.black54),
-
             const SizedBox(width: 12),
 
             // Text
@@ -118,56 +88,7 @@ class _GlobalSearchBarState extends ConsumerState<GlobalSearchBar>
                 ),
               ),
             ),
-
             const SizedBox(width: 6),
-
-            // Suggestions button
-            // IconButton(
-            //   icon: const Icon(Icons.lightbulb_outline, color: Colors.orange),
-            //   onPressed: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(builder: (_) => const SearchSuggestionScreen()),
-            //     );
-            //   },
-            // ),
-
-            //Filters button
-            IconButton(
-              icon: const Icon(Icons.filter_list, color: Colors.blueAccent),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SearchFiltersScreen()),
-                );
-              },
-            ),
-
-            // Voice Search button
-            GestureDetector(
-              onTap: () {
-                if (isListening) {
-                  _stopListening();
-                } else {
-                  _startListening();
-                }
-              },
-              onLongPress: () {
-                //Full voice search screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const VoiceSearchScreen()),
-                );
-              },
-              child: ScaleTransition(
-                scale: _micAnimation,
-                child: Icon(
-                  isListening ? Icons.mic : Icons.mic_none,
-                  size: 26,
-                  color: isListening ? Colors.red : Colors.black87,
-                ),
-              ),
-            ),
           ],
         ),
       ),

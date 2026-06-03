@@ -1,19 +1,25 @@
 const Map<String, List<String>> subcategoryAliases = {
+  "women": ["women", "woman", "female", "girl", "ladies", "lady",],
+  "men": ["men", "man", "male", "boy", "gent", "gents",],
+  "kids": ["kid", "kids", "child", "children", "baby", "babies",],
   "tshirts": ["tshirt", "tshirts", "t shirt", "tee", "tees"],
   "shirts": ["shirt", "shirts"],
   "jeans": ["jeans", "denim", "pant", "pants"],
-  "sandals": ["sandal", "sandals", "flipflops", "flipflop"],
+  "sandals": ["sandal", "sandals","sandle", "sandles", "flipflops", "flipflop"],
   "handbags": ["handbag", "handbags", "bag", "bags"],
   "shoes": ["shoe", "shoes", "sneaker", "sneakers", "sports-shoes"],
   "tops": ["top", "tops"],
-  "dresses": ["dress", "dresses", "frocks"],
+  "dresses": [ "dress", "dresses", "frock", "frocks", "gown",],
   "shorts": ["short", "shorts"],
   "skirts": ["skirt", "skirts"],
   "jackets": ["jacket", "jackets", "coat", "coats"],
   "sarees": ["saree", "sarees"],
   "kurtas": ["kurta", "kurtas"],
   "kurtis": ["kurti", "kurtis"],
-  "watches": ["watch", "watches"],
+  "watches": ["watch", "watches", "smartwatch", "clock",],
   "perfumes": ["perfume", "perfumes", "deo", "deodorant"],
   "bags": ["bag", "bags", "backpack", "backpacks"],
+  "accessories": ["accessory", "accessories", "jewellery", "jewelry", "ring", "rings", "necklace"
+      "bracelet", "earrings", "wallet", "belt", "cap", "caps", "sunglasses",],
+
 };

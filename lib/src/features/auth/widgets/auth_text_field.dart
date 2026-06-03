@@ -1,56 +1,43 @@
-// lib/src/features/auth/widgets/auth_text_field.dart
-
 import 'package:flutter/material.dart';
 
-class AuthTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final String? hint;
-  final IconData prefixIcon;
-  final Widget? suffix;
-  final bool obscureText;
-  final String? Function(String?)? validator;
-  final void Function(String)? onChanged;
-  final TextInputType keyboardType;
+class AuthTextField {
 
-  const AuthTextField({
-    Key? key,
-    required this.controller,
-    required this.label,
-    this.hint,
-    required this.prefixIcon,
-    this.suffix,
-    this.obscureText = false,
-    this.validator,
-    this.onChanged,
-    this.keyboardType = TextInputType.text,
-  }) : super(key: key);
+  static InputDecoration authInputDecoration({
+    required String hintText,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      hintText: hintText,
 
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      validator: validator,
-      onChanged: onChanged,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(prefixIcon),
-        suffixIcon: suffix,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+      prefixIcon: Icon(
+        prefixIcon,
+        color: const Color(0xFFD4AF37),
+      ),
+
+      suffixIcon: suffixIcon,
+
+      filled: true,
+      fillColor: Colors.white,
+
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 18,
+        horizontal: 18,
+      ),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(
+          color: Colors.grey.shade300,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.grey),
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(
+          color: Color(0xFFD4AF37),
+          width: 1.5,
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.black87, width: 1.4),
-        ),
-        contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       ),
     );
   }

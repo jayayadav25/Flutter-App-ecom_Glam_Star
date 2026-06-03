@@ -1,218 +1,281 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../common/styles/app_button_styles.dart';
+import '../../../common/styles/colors.dart';
+import '../../../common/styles/text_styles.dart';
 import '../providers/auth_controller.dart';
-import '../widgets/auth_text_field.dart';
+import '../providers/step_provider.dart';
+import '../widgets/address_step.dart';
+import '../widgets/security_step.dart';
+import '../widgets/step_model.dart';
+import '../widgets/basic_info_step.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
-  static const routeName = '/signup';
-
-  const SignupScreen({Key? key}) : super(key: key);
+  const SignupScreen({super.key});
 
   @override
   ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
-  final _formKey = GlobalKey<FormState>();
+
+  // Form Keys
+  final _basicFormKey = GlobalKey<FormState>();
+  final _securityFormKey = GlobalKey<FormState>();
+  final _addressFormKey = GlobalKey<FormState>();
+
+  // Controllers
   final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
+  final _phoneCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _confirmPasswordCtrl = TextEditingController();
+  final _addressCtrl = TextEditingController();
+  final _cityCtrl = TextEditingController();
+  final _stateCtrl = TextEditingController();
+  final _pincodeCtrl = TextEditingController();
 
-  bool _obscure1 = true;
-  bool _obscure2 = true;
-  double _passwordStrength = 0;
+  // Steps
+  final steps = [
+    SignupStepModel(
+      title: 'Basic Information',
+      icon: Icons.person_outline,
+    ),
+    SignupStepModel(
+      title: 'Security Setup',
+      icon: Icons.lock_outline,
+    ),
+    SignupStepModel(
+      title: 'Address Details',
+      icon: Icons.location_on_outlined,
+    ),
+  ];
+
 
   @override
   void dispose() {
     _nameCtrl.dispose();
     _emailCtrl.dispose();
+    _phoneCtrl.dispose();
     _passwordCtrl.dispose();
     _confirmPasswordCtrl.dispose();
+    _addressCtrl.dispose();
+    _cityCtrl.dispose();
+    _stateCtrl.dispose();
+    _pincodeCtrl.dispose();
     super.dispose();
   }
 
-  void _checkPasswordStrength(String password) {
-    double strength = 0;
-    if (password.length >= 6) strength += 0.25;
-    if (RegExp(r'[A-Z]').hasMatch(password)) strength += 0.25;
-    if (RegExp(r'[0-9]').hasMatch(password)) strength += 0.25;
-    if (RegExp(r'[!@#\$%^&*(),.?":{}|<>]').hasMatch(password)) strength += 0.25;
-
-    setState(() => _passwordStrength = strength);
+  // Build Step
+  Widget _buildStepContent(
+      int stepIndex) {
+    switch (stepIndex) {
+      case 0:
+        return BasicInfoStep(
+          formKey: _basicFormKey,
+          nameCtrl: _nameCtrl,
+          emailCtrl: _emailCtrl,
+          phoneCtrl: _phoneCtrl,
+        );
+      case 1:
+        return SecurityStep(
+          formKey: _securityFormKey,
+          passwordCtrl: _passwordCtrl,
+          confirmPasswordCtrl: _confirmPasswordCtrl,
+        );
+      case 2:
+        return AddressStep(
+          formKey: _addressFormKey,
+          addressCtrl: _addressCtrl,
+          cityCtrl: _cityCtrl,
+          stateCtrl: _stateCtrl,
+          pincodeCtrl: _pincodeCtrl,
+        );
+      default:
+        return const SizedBox();
+    }
   }
 
-  Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+ // Validate Step
+  bool _validateStep(int stepIndex) {
+    switch (stepIndex) {
+      case 0:
+        return _basicFormKey.currentState!.validate();
+      case 1:
+        return _securityFormKey.currentState!.validate();
+      case 2:
+        return _addressFormKey.currentState!.validate();
+      default:
+        return false;
+    }
+  }
 
+  // Next Step
+  Future<void> _nextStep() async {
+    FocusScope.of(context).unfocus();
+    final currentStep = ref.read(signupStepProvider);
+    final isValid = _validateStep(currentStep);
+    if (!isValid) return;
+    if (currentStep < steps.length - 1) {
+      ref.read(signupStepProvider.notifier).state++;
+    } else {
+      await _signup();
+    }
+  }
+
+ // Previous Step
+  void _previousStep() {
+    final currentStep = ref.read(signupStepProvider);
+    if (currentStep > 0) {
+      ref.read(signupStepProvider.notifier).state--;
+    }
+  }
+
+
+  // Signup
+  Future<void> _signup() async {
     await ref.read(authControllerProvider.notifier).signUp(
       _nameCtrl.text.trim(),
       _emailCtrl.text.trim(),
       _passwordCtrl.text.trim(),
     );
-
-    final authState = ref.read(authControllerProvider);
-
-    if (authState.user != null) {
-      if (mounted) context.go('/home');
+    final state = ref.read(authControllerProvider);
+    if (!mounted) return;
+    if (state.user != null) {
+      context.go('/home');
+    } else if (state.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content:
+        Text(state.error!),),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentStep = ref.watch(signupStepProvider);
     final authState = ref.watch(authControllerProvider);
-
     return Scaffold(
+      backgroundColor: AppColors.offWhite,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  const Icon(Icons.person_add, size: 80, color: Colors.black87),
-                  const SizedBox(height: 12),
-                  Text('Create Your Trendora Account',
-                      style: Theme.of(context).textTheme.titleLarge),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20,),
+          child: Column(
+            children: [
+              Center(
+                child: Image.asset('assets/logo.png', height: 120,),),
+              const SizedBox(height: 10),
+              const Text('Create Account',
+                style: AppTextStyles.title,
+              ),
+              const SizedBox(height: 10),
 
-                  const SizedBox(height: 32),
-
-                  AuthTextField(
-                    controller: _nameCtrl,
-                    label: 'Full Name',
-                    hint: 'Enter your name',
-                    prefixIcon: Icons.person,
-                    validator: (value) => value == null || value.isEmpty
-                        ? 'Name is required'
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-
-                  AuthTextField(
-                    controller: _emailCtrl,
-                    label: 'Email',
-                    hint: 'Enter your email',
-                    prefixIcon: Icons.email,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Email is required';
-                      }
-                      if (!RegExp(r"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}")
-                          .hasMatch(value)) {
-                        return 'Enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  AuthTextField(
-                    controller: _passwordCtrl,
-                    label: 'Password',
-                    hint: 'Create a strong password',
-                    prefixIcon: Icons.lock,
-                    obscureText: _obscure1,
-                    suffix: IconButton(
-                      icon: Icon(
-                          _obscure1 ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscure1 = !_obscure1),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Password is required';
-                      }
-                      if (value.length < 6) {
-                        return 'Minimum 6 characters required';
-                      }
-                      return null;
-                    },
-                    // check password strength
-                    onChanged: (value) => _checkPasswordStrength(value),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  // Password Strength Indicator
-                  LinearProgressIndicator(
-                    value: _passwordStrength,
-                    backgroundColor: Colors.grey.shade300,
-                    minHeight: 6,
-                    color: _passwordStrength <= 0.25
-                        ? Colors.red
-                        : _passwordStrength <= 0.5
-                        ? Colors.orange
-                        : _passwordStrength <= 0.75
-                        ? Colors.lightGreen
-                        : Colors.green,
-                  ),
-
-                  const SizedBox(height: 16),
-
-
-                  AuthTextField(
-                    controller: _confirmPasswordCtrl,
-                    label: 'Confirm Password',
-                    hint: 'Re-enter your password',
-                    prefixIcon: Icons.lock_outline,
-                    obscureText: _obscure2,
-                    suffix: IconButton(
-                      icon: Icon(
-                          _obscure2 ? Icons.visibility : Icons.visibility_off),
-                      onPressed: () => setState(() => _obscure2 = !_obscure2),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please confirm password';
-                      }
-                      if (value != _passwordCtrl.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: authState.loading ? null : _submit,
-                      child: authState.loading
-                          ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                          : const Text('Create Account'),
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Already have an account?'),
-                      TextButton(
-                        onPressed: () => context.go('/login'),
-                        child: const Text('Login'),
+              // Stepper
+              Row(
+                children: List.generate(steps.length, (index) {
+                    final isActive = currentStep >= index;
+                    return Expanded(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300,),
+                        margin: const EdgeInsets.symmetric(horizontal: 4,),
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: isActive ? AppColors.softGold : Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(20,),
+                        ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                steps[currentStep].title,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.primaryBlack,
+                ),
+              ),
 
-                  /// Error message
-                  if (authState.error != null) ...[
-                    const SizedBox(height: 8),
-                    Text(
-                      authState.error!,
-                      style: const TextStyle(color: Colors.red),
+              const SizedBox(height: 30),
+              //Card
+              Container(
+                padding: const EdgeInsets.all(24,),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30,),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.06,),
+                      blurRadius: 25,
+                      offset: const Offset(0, 10,),
                     ),
                   ],
+                ),
+
+                child: _buildStepContent(currentStep,),),
+              const SizedBox(height: 30),
+
+             // Buttons
+              Row(
+                children: [
+                  if (currentStep > 0)
+                    Expanded(
+                      child: SizedBox(
+                        height: 56,
+                        child: OutlinedButton(
+                          onPressed: _previousStep,
+                          style: AppButtonStyles.outlineButton,
+                          child: Text('Back',
+                            style: AppTextStyles.blackButtonText,
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (currentStep > 0)
+                    const SizedBox(width: 14),
+
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: authState.loading ? null : _nextStep,
+                        style: AppButtonStyles.primaryButton,
+                        child: authState.loading ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                            : Text(
+                          currentStep == steps.length - 1 ? 'Create Account' : 'Continue',
+                          style: AppTextStyles.buttonText,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-            ),
+
+              const SizedBox(height: 30),
+
+             // Login
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Already have an account?',
+                    style: AppTextStyles.description,
+                  ),
+                  TextButton(
+                    onPressed: () {context.pop();},
+                    style: AppButtonStyles.goldTextButton,
+                    child: const Text('Login',
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

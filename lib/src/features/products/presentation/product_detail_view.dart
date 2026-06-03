@@ -1,162 +1,156 @@
+import 'package:firebase_mastery_app/src/common/styles/text_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../common/styles/colors.dart';
 import '../../../core/models/product_model.dart';
-import '../widgets/product_actions.dart';
+import '../widgets/offer_coupon.dart';
+import '../widgets/price_section.dart';
+import '../widgets/product_appbar.dart';
+import '../widgets/product_feature_section.dart';
 import '../widgets/product_image_carousel.dart';
+import '../widgets/rating_section.dart';
 import '../widgets/return_policy_section.dart';
+import '../widgets/size_selector.dart';
 
-class ProductDetailView extends ConsumerStatefulWidget {
-
+class ProductDetailView extends StatelessWidget {
   final ProductModel product;
 
-  const ProductDetailView({required this.product});
-
-  @override
-  ConsumerState<ProductDetailView> createState() => ProductDetailViewState();
-}
-
-class ProductDetailViewState extends ConsumerState<ProductDetailView> {
-
-  int imageIndex = 0;
+  const ProductDetailView({
+    super.key,
+    required this.product,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final p = widget.product;
-
-    return ListView(
-      children: [
-        Stack(
-          children: [
-            ProductImageCarousel(product: p),
-            ProductActionsBar(product: p),
-          ],
-        ),
-
-        const SizedBox(height: 16),
-
-        // Product info
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.all(16),
+    return CustomScrollView(
+      slivers: [
+        LuxuryAppBar(product: product),
+        SliverToBoxAdapter(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                p.title,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Rating
-              Row(
-                children: [
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(4),
+              ProductImageCarousel(product: product),
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
                     ),
-                    child: Row(
-                      children: [
-                        Text(
-                          "${p.averageRating}",
-                          style: const TextStyle(
-                              color: Colors.white),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.softGold.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Text(
+                        'PREMIUM COLLECTION',
+                        style: TextStyle(
+                          color: AppColors.softGold,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1,
                         ),
-                        const Icon(Icons.star,
-                            color: Colors.white, size: 14),
+                      ),
+                    ),
+
+                    const SizedBox(height: 5),
+                    Text(product.title,
+                      style: AppTextStyles.heading2
+                    ),
+                    const SizedBox(height: 5),
+                    RatingSection(
+                      rating: product.averageRating.toDouble(),
+                    ),
+                    const SizedBox(height: 5),
+                    PriceSection(
+                      price: product.sellingPrice.toDouble(),
+                      mrp: product.actualPrice.toDouble(),
+                      discount: product.discount,
+                    ),
+                    const SizedBox(height: 5),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.local_shipping_outlined,
+                          color: AppColors.emerald,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Free delivery by tomorrow',
+                          style: TextStyle(
+                            color: AppColors.grey700,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text("Verified Buyers"),
-                ],
-              ),
 
-              const SizedBox(height: 12),
-
-              // Price
-              Row(
-                children: [
-                  Text(
-                    "₹${p.sellingPrice}",
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 5),
+                    Text(
+                      product.inStock
+                          ? 'In Stock'
+                          : 'Out Of Stock',
+                      style: TextStyle(
+                        color: product.inStock
+                            ? AppColors.success
+                            : Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "₹${p.actualPrice}",
-                    style: const TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    "${p.discount}% OFF",
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // Delivery
-              Row(
-                children: const [
-                  Icon(Icons.local_shipping_outlined),
-                  SizedBox(width: 6),
-                  Text("Free delivery by Tomorrow"),
-                ],
-              ),
-
-              const SizedBox(height: 12),
-
-              // Stock
-              Text(
-                p.inStock ? "In Stock" : "Out of Stock",
-                style: TextStyle(
-                  color: p.inStock ? Colors.green : Colors.red,
-                  fontWeight: FontWeight.w600,
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+              const SizeSelector(),
+              const SizedBox(height: 6),
+              const OfferCouponSection(),
+              const SizedBox(height: 3),
+              ProductFeaturesSection(product: product),
 
-        const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 5),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Product Details',
+                      style: AppTextStyles.smallTitle
+                    ),
 
-        // Description
-        Container(
-          color: Colors.white,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Product Details",
-                style:
-                TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    const SizedBox(height: 5),
+
+                    Text(
+                      product.description,
+                      style: AppTextStyles.description
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(p.description),
+            //  const SizedBox(height: 5),
+              const ReturnPolicySection(),
+
+             // const SizedBox(height: 120),
             ],
           ),
         ),
-
-        const ReturnPolicySection(),
-
-        const SizedBox(height: 80),
       ],
     );
   }

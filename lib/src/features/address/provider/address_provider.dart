@@ -2,47 +2,35 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/address_model.dart';
-import '../data/address_repository.dart';
+import '../controllers/address_controllers.dart';
+import '../data/address_remote_repository.dart';
+import '../services/address_firestore_service.dart';
 
-// Firestore address provider (read only)
-final addressProvider =
-FutureProvider<List<AddressModel>>((ref) async {
-  final user = FirebaseAuth.instance.currentUser;
+final firestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
-  if (user == null) {
-    return [];
-  }
+final firebaseAuthProvider = Provider((ref) => FirebaseAuth.instance);
 
-  final snap = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .collection('addresses')
-      .get();
-
-  return snap.docs
-      .map((d) => AddressModel.fromMap(d.id, d.data()))
-      .toList();
+final addressFirestoreServiceProvider = Provider<AddressFirestoreService>((ref) {
+  return AddressFirestoreService(
+    ref.read(firestoreProvider),
+  );
 });
 
-final selectedAddressProvider =
-StateProvider<AddressModel?>((ref) => null);
-// Local (hive) address notifire
-class AddressNotifier extends StateNotifier<List<AddressModel>> {
-  final AddressRepository repo;
+final addressRemoteRepoProvider = Provider<AddressRemoteRepository>((ref) {
+  return AddressRemoteRepository(
+    ref.read(firestoreProvider),
+  );
+});
 
-  AddressNotifier(this.repo) : super(repo.getAll());
+final addressProvider = FutureProvider<List<AddressModel>>((ref) async {
 
-  void add(AddressModel address) async {
-    await repo.save(address);
-    state = repo.getAll();
-  }
+  final user = ref.read(firebaseAuthProvider).currentUser;
+  if (user == null) return [];
+  return ref.read(addressRemoteRepoProvider).getAddresses(user.uid);
+});
 
-  void delete(String id) async {
-    await repo.delete(id);
-    state = repo.getAll();
-  }
-}
+final selectedAddressProvider = StateProvider<AddressModel?>((ref) => null,);
 
-// Selected address (checkout)
-// final selectedAddressProvider =
-// StateProvider<AddressModel?>((_) => null);
+final addressControllerProvider = AsyncNotifierProvider<AddressController, void>(
+  AddressController.new,
+);

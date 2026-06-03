@@ -4,8 +4,7 @@ import '../../../core/models/light_product_model.dart';
 import '../../home/providers/home_provider.dart';
 import 'pagination_light_state.dart';
 
-final productsLightProvider =
-StateNotifierProvider<ProductsLightNotifier, PaginatedLightState>(
+final productsLightProvider = StateNotifierProvider<ProductsLightNotifier, PaginatedLightState>(
       (ref) => ProductsLightNotifier(ref),
 );
 
@@ -21,21 +20,6 @@ class ProductsLightNotifier extends StateNotifier<PaginatedLightState> {
   bool _loading = false;
   static const int _limit = 20;
 
-  // UI tab
-  // String? _mapTabToCategory(HomeTab tab) {
-  //   switch (tab) {
-  //     case HomeTab.men:
-  //       return "Men";
-  //     case HomeTab.women:
-  //       return "Women";
-  //     case HomeTab.kids:
-  //       return "Kids";
-  //     case HomeTab.home:
-  //     default:
-  //       return null; // HOME = no filter
-  //   }
-  // }
-
   void resetAndFetch() {
     _lastDoc = null;
     state = PaginatedLightState.initial();
@@ -48,7 +32,6 @@ class ProductsLightNotifier extends StateNotifier<PaginatedLightState> {
 
     try {
       final tab = ref.read(homeTabProvider);
-
       Query query = _db.collection('products_light');
 
       // Category Filter
@@ -60,23 +43,14 @@ class ProductsLightNotifier extends StateNotifier<PaginatedLightState> {
       if (tab == HomeTab.home) {
         query = query.orderBy('product_id');
       }
-
       if (_lastDoc != null) {
         query = query.startAfterDocument(_lastDoc!);
       }
-
       query = query.limit(_limit);
-
       final snapshot = await query.get();
-
-      final newItems = snapshot.docs
-          .map((d) =>
-          LightProductModel.fromJson(d.data() as Map<String, dynamic>))
-          .toList();
-
-      _lastDoc =
-      snapshot.docs.isNotEmpty ? snapshot.docs.last : _lastDoc;
-
+      final newItems = snapshot.docs.map((d) =>
+          LightProductModel.fromJson(d.data() as Map<String, dynamic>)).toList();
+      _lastDoc = snapshot.docs.isNotEmpty ? snapshot.docs.last : _lastDoc;
       state = state.copyWith(
         items: [...state.items, ...newItems],
         isLoading: false,

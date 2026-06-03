@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => SplashScreenState();
+  ConsumerState<SplashScreen> createState() => SplashScreenState();
 }
 
-class SplashScreenState extends State<SplashScreen>
+class SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fade;
@@ -59,6 +60,7 @@ class SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Scaffold(
       body: FadeTransition(
         opacity: _fade,
@@ -68,35 +70,15 @@ class SplashScreenState extends State<SplashScreen>
             children: [
               Hero(
                 tag: 'logo',
-                child: Container(
-                  width: 140,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Colors.black87, Colors.grey.shade800],
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 12,
-                      )
-                    ],
-                  ),
-                  child: Center(
-                    child: Image.asset("assets/logo.png")
+                child: SizedBox(
+                  width: size.width * 0.8,
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.asset("assets/logo.png"),
                   ),
                 ),
               ),
-              const SizedBox(height: 18),
-              const Text(
-                "Trendora",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-              const Text(
-                "Luxury fashion, at your fingertips",
-                style: TextStyle(color: Colors.grey),
-              ),
+
             ],
           ),
         ),

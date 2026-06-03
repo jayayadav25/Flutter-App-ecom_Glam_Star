@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
-import 'editorial_data.dart';
-import 'reusable_widget.dart';
+import '../data/editorial_repository.dart';
+import '../domain/entities/editorial_type.dart';
+import 'editorial_container.dart';
 
+class HomeEditorialSection extends StatelessWidget {
+  final EditorialType type;
 
-class EditorialSection extends StatelessWidget {
-  final EditorialData section;
-
-  const EditorialSection({super.key, required this.section});
+  const HomeEditorialSection({
+    super.key,
+    required this.type,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final sections = EditorialRepository.getSections(type);
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SectionHeader(
-          title: section.title,
-          subtitle: section.subtitle,
-        ),
-      ],
+      children: List.generate(sections.length, (index) {
+          return EditorialContainer(
+            section: sections[index],
+            index: index,
+            type: type,
+          );
+        },
+      ),
     );
   }
 }
-

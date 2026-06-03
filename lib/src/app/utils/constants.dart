@@ -1,5 +1,3 @@
-// lib/src/utils/constants.dart
-
 class AppConstants {
   static const String appName = 'Trendora';
 

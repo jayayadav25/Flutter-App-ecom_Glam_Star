@@ -3,9 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../data/auth_repository.dart';
 import 'auth_providers.dart';
 
-// ======================================================
-//               AUTH STATE MODEL
-// ======================================================
+// Auth State Model
 class AuthState {
   final fb.User? user;
   final bool loading;
@@ -17,8 +15,7 @@ class AuthState {
     required this.error,
   });
 
-  factory AuthState.initial() =>
-      const AuthState(user: null, loading: false, error: null);
+  factory AuthState.initial() => const AuthState(user: null, loading: false, error: null);
 
   AuthState copyWith({
     fb.User? user,
@@ -33,24 +30,20 @@ class AuthState {
   }
 }
 
-// ======================================================
-//                  AUTH CONTROLLER
-// ======================================================
+// Auth Controller
 class AuthController extends StateNotifier<AuthState> {
   final AuthRepository _repo;
   final Ref ref;
 
   AuthController(this._repo, this.ref) : super(AuthState.initial());
 
-  // EMAIL LOGIN
+  // SignIn
   Future<void> signIn(String email, String password) async {
     try {
       state = state.copyWith(loading: true, error: null);
       ref.read(authInProgressProvider.notifier).state = true;
-
       final user = await _repo.signIn(email, password);
       state = state.copyWith(user: user, loading: false);
-
     } catch (e) {
       state = state.copyWith(error: e.toString(), loading: false);
     } finally {
@@ -58,15 +51,13 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  // EMAIL SIGNUP
+  // SignUp
   Future<void> signUp(String name, String email, String password) async {
     try {
       state = state.copyWith(loading: true, error: null);
       ref.read(authInProgressProvider.notifier).state = true;
-
       final user = await _repo.signUp(email, password, name);
       state = state.copyWith(user: user, loading: false);
-
     } catch (e) {
       state = state.copyWith(error: e.toString(), loading: false);
     } finally {
@@ -74,16 +65,13 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-
-  // GOOGLE AUTH
+  // Google Auth
   Future<void> signInWithGoogle() async {
     try {
       state = state.copyWith(loading: true, error: null);
       ref.read(authInProgressProvider.notifier).state = true;
-
       final user = await _repo.signInWithGoogle();
       state = state.copyWith(user: user, loading: false);
-
     } catch (e) {
       state = state.copyWith(error: e.toString(), loading: false);
     } finally {
@@ -91,16 +79,15 @@ class AuthController extends StateNotifier<AuthState> {
     }
   }
 
-  // LOGOUT
+  // Logout
   Future<void> signOut() async {
     await _repo.signOut();
     state = AuthState.initial();
   }
 }
 
-// PROVIDER
-final authControllerProvider =
-StateNotifierProvider<AuthController, AuthState>((ref) {
+// Provider
+final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
   final repo = ref.read(authRepositoryProvider);
   return AuthController(repo, ref);
 });

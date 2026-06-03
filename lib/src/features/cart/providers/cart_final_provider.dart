@@ -1,19 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'cart_selected_total_provider.dart';
+import 'cart_total_provider.dart';
 import 'coupon_providers.dart';
 
-final finalPayableAmountProvider = Provider<double>((ref) {
-  final selectedSellingTotal =
-  ref.watch(selectedSellingTotalProvider);
-
-  // ✅ appliedCouponProvider is NOT AsyncValue
-  final coupon = ref.watch(appliedCouponProvider);
-  final couponDiscount = coupon?.discount ?? 0;
-
-  const double convenienceCharge = 0;
-
-  final total =
-      selectedSellingTotal - couponDiscount + convenienceCharge;
-
-  return total < 0 ? 0 : total;
+final finalAmountProvider = Provider<double>((ref) {
+  final total = ref.watch(cartTotalProvider);
+  final coupon = ref.watch(couponProvider);
+  final discount = coupon?.discount ?? 0;
+  final finalAmount = total - discount;
+  return finalAmount < 0 ? 0 : finalAmount;
 });

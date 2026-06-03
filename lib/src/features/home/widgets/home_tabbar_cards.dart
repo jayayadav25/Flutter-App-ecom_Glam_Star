@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../common/styles/colors.dart';
 import '../providers/home_provider.dart';
 
 class HomeTabBar extends ConsumerWidget {
@@ -7,94 +8,101 @@ class HomeTabBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedTab = ref.watch(homeTabProvider);
 
-    Widget tabItem({
-      required HomeTab tab,
-      required String title,
-      IconData? icon,
-      String? imagePath,
-    }) {
-      final isActive = selectedTab == tab;
+    final selected = ref.watch(homeTabProvider);
+    return SizedBox(
+      height: 44,
+      child: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        scrollDirection: Axis.horizontal,
+        children: [
+          _tab(
+            ref,
+            selected,
+            HomeTab.home,
+            'Home',
+            Icons.home_outlined,
+          ),
 
-      return GestureDetector(
-        onTap: () {
-          ref.read(homeTabProvider.notifier).state = tab;
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical:0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (icon != null)
-                    Icon(icon, size: 30, color: Colors.black),
+          _tab(
+            ref,
+            selected,
+            HomeTab.women,
+            'Women',
+            Icons.face_3_outlined,
+          ),
 
-                  if (imagePath != null)
-                    CircleAvatar(
-                      radius: 15, // 👈 icon-sized
-                      backgroundColor: Colors.grey.shade200,
-                      backgroundImage: AssetImage(imagePath),
-                    ),
+          _tab(
+            ref,
+            selected,
+            HomeTab.men,
+            'Men',
+            Icons.face_6_outlined,
+          ),
 
+          _tab(
+            ref,
+            selected,
+            HomeTab.kids,
+            'Kids',
+            Icons.child_friendly_outlined,
+          ),
+        ],
+      ),
+    );
+  }
 
-                  const SizedBox(width: 6),
+  Widget _tab(
+      WidgetRef ref,
+      HomeTab selected,
+      HomeTab tab,
+      String title,
+      IconData icon,
+      ) {
 
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
+    final active = selected == tab;
+
+    return GestureDetector(
+
+      onTap: () {
+        ref.read(homeTabProvider.notifier).state = tab;
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        margin: const EdgeInsets.only(right: 8, bottom: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5, ),
+
+        decoration: BoxDecoration(
+          gradient: active ? const LinearGradient(
+            colors: [
+              AppColors.softGold,
+              AppColors.luxuryGold,
+            ],
+          ) : null,
+
+          color: active ? null : Colors.white,
+
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+              color: Colors.black.withOpacity(.05),
             ),
+          ],
+        ),
 
-            const SizedBox(height: 4),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              height: 3,
-              width: isActive ? 22 : 0,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.circular(2),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: active ? Colors.white : Colors.black,),
+            const SizedBox(width: 8),
+            Text(title,
+              style: TextStyle(
+                color: active ? Colors.white : Colors.black, fontWeight: FontWeight.w700,
               ),
             ),
           ],
         ),
-      );
-    }
-
-    return SizedBox(
-      height: 56,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        children: [
-          tabItem(
-            tab: HomeTab.home,
-            title: "Home",
-            icon: Icons.home_outlined,
-          ),
-          tabItem(
-            tab: HomeTab.women,
-            title: "Women",
-            imagePath: "assets/images/icons/women.png",
-          ),
-          tabItem(
-            tab: HomeTab.men,
-            title: "Men",
-            imagePath: "assets/images/icons/men.png",
-          ),
-          tabItem(
-            tab: HomeTab.kids,
-            title: "Kids",
-            imagePath: "assets/images/icons/kids.png",
-          ),
-        ],
       ),
     );
   }

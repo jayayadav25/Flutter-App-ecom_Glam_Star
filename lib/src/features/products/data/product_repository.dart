@@ -1,22 +1,46 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/models/product_model.dart';
-import '../../../core/adaptors/firestore_product_adapter.dart';
 
 class ProductRepository {
-  final _db = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore;
+  ProductRepository(this.firestore);
 
-  Stream<List<ProductModel>> getAllProducts() {
-    return _db.collection('products').snapshots().map(
-          (snapshot) => snapshot.docs
-          .map((doc) => FirestoreProductAdapter.fromDoc(doc))
-          .toList(),
-    );
+  Future<List<ProductModel>> getProducts() async {
+    final snapshot = await firestore
+        .collection('products')
+        .limit(20)
+        .get();
+
+    return snapshot.docs
+        .map((e) => ProductModel.fromJson(e.data()))
+        .toList();
   }
 
-  Stream<ProductModel?> getProductById(String id) {
-    return _db.collection('products').doc(id).snapshots().map((doc) {
-      if (!doc.exists) return null;
-      return FirestoreProductAdapter.fromDoc(doc);
-    });
+  Future<ProductModel> getProduct(int productId) async {
+    final doc = await firestore
+        .collection('products')
+        .doc(productId.toString())
+        .get();
+
+    if (!doc.exists) {
+      throw Exception('Product not found');
+    }
+
+    return ProductModel.fromJson(doc.data()!);
+  }
+
+  Future<List<ProductModel>> getSimilarProducts(
+      String category,
+      ) async {
+    final snapshot = await firestore
+        .collection('products')
+        .where('category', isEqualTo: category)
+        .limit(10)
+        .get();
+
+    return snapshot.docs
+        .map((e) => ProductModel.fromJson(e.data()))
+        .toList();
   }
 }
+

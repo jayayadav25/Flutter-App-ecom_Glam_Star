@@ -89,3 +89,4 @@ class SearchFiltersScreen extends ConsumerWidget {
     );
   }
 }
+
