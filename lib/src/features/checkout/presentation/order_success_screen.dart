@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../widgets/images.dart';
+
 class OrderSuccessScreen extends ConsumerWidget {
   const OrderSuccessScreen({
     super.key,
@@ -17,20 +19,26 @@ class OrderSuccessScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  color: Colors.green.shade50,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check,
-                  size: 70,
-                  color: Colors.green,
-                ),
-              ),
+              // Container(
+              //   width: 140,
+              //   height: 140,
+              //   decoration: BoxDecoration(
+              //     color: Colors.green.shade50,
+              //     shape: BoxShape.circle,
+              //   ),
+              //   child: const Icon(
+              //     Icons.check,
+              //     size: 70,
+              //     color: Colors.green,
+              //   ),
+              // ),
 
+              Image.asset(
+                AppImages.order_success,
+                width: 325,
+                height: 325,
+                fit: BoxFit.cover,
+              ),
               const SizedBox(height: 30),
               const Text('Order Placed Successfully',
                 textAlign: TextAlign.center,

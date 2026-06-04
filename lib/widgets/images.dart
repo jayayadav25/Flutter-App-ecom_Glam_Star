@@ -5,6 +5,9 @@ class AppImages {
   static const String shopping_bag = "assets/shopping_bag.png";
   static const String add_address = "assets/add_address.png";
   static const String ordernow = "assets/ordernow.png";
+
+  static const String order_success = "assets/order_success.png";
+  static const String empty_wishlist = "assets/empty_wishlist.png";
   // ICONS
   static const String menIcon = 'assets/images/icons/men.png';
   static const String womenIcon = 'assets/images/icons/women.png';
@@ -158,5 +161,32 @@ class AppImages {
 // ================= ACCESSORIES =================
   static const String women_handbag = 'assets/images/editorial_images/handbag.png';
   static const String sandal_bag = 'assets/images/editorial_images/sandle_bag.png';
+
+  // ================= SCREENSHOTS =================
+
+  static const String login = 'assets/screenshots/login.jpg';
+  static const String signup = 'assets/screenshots/signup.jpg';
+  static const String home_screen = 'assets/screenshots/home_screen.jpg';
+  static const String explore_products = 'assets/screenshots/explore_products.jpg';
+  static const String product_detail = 'assets/screenshots/product_detail.jpg';
+  static const String product_info = 'assets/screenshots/product_info.jpg';
+  static const String product_list = 'assets/screenshots/product_list.png';
+  static const String checkout_screen = 'assets/screenshots/checkout_screen.jpg';
+  static const String cart_screen = 'assets/screenshots/cart_screen.jpg';
+  static const String payment_screen = 'assets/screenshots/payment_screen.jpg';
+  static const String order_Success = 'assets/screenshots/order_Success.jpg';
+  static const String order_history = 'assets/screenshots/order_history.jpg';
+  static const String order_details = 'assets/screenshots/order_details.jpg';
+  static const String order_status = 'assets/screenshots/order_status.jpg';
+  static const String order_price_details = 'assets/screenshots/order_price_details.jpg';
+  static const String profile_screen = 'assets/screenshots/profile_screen.jpg';
+  static const String edit_profile = 'assets/screenshots/edit_profile.jpg';
+  static const String address_list = 'assets/screenshots/address_list.jpg';
+  static const String add_address_screen = 'assets/screenshots/add_address_screen.jpg';
+  static const String empty_cart = 'assets/screenshots/empty_cart.jpg';
+  static const String forget_products = 'assets/screenshots/forget_products.jpg';
+  static const String search_list = 'assets/screenshots/search_list.jpg';
+  static const String search_screen = 'assets/screenshots/search_screen.jpg';
+  static const String wishlist = 'assets/screenshots/wishlist.jpg';
 
 }

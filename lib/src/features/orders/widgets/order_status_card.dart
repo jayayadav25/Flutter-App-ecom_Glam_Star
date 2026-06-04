@@ -26,7 +26,7 @@ class OrderStatusCard extends ConsumerWidget {
       case 'Shipped':statusColor = Colors.blue;
         break;
 
-      default:statusColor = Colors.orange;
+      default:statusColor = AppColors.softGold;
     }
 
     return Container(
