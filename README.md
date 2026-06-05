@@ -181,4 +181,3 @@ flutter build ios --release
 
 ---
 
-> 💡 **Tip:** Update all placeholder values (app name, username, tech stack, state management library) to match your actual project before pushing to GitHub.
