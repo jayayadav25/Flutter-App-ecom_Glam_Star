@@ -89,7 +89,13 @@ class CartScreen extends ConsumerWidget {
                     child: SizedBox(
                       height: 48,
                       child: ElevatedButton(
-                        style: AppButtonStyles.buyNowButton,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
                         onPressed: () {context.push('/checkout');},
                         child: const Text('Proceed To Buy',
                           style: TextStyle(
