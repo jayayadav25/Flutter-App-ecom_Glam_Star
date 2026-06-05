@@ -9,23 +9,43 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 <table>
   <tr>
     <td align="center"><strong>Login Screen</strong></td>
+    <td align="center"><strong>Signup Screen</strong></td>
     <td align="center"><strong>Home Screen</strong></td>
-    <td align="center"><strong>Product Listing</strong></td>
   </tr>
   <tr>
     <td><img src="assets/screenshots/login.jpg" width="200"/></td>
+    <td><img src="assets/screenshots/signup.jpg" width="200"/></td>
     <td><img src="assets/screenshots/home_screen.jpg" width="200"/></td>
-    <td><img src="assets/screenshots/explore_products.jpg" width="200"/></td>
   </tr>
-  <tr>
+<tr>
+    <td align="center"><strong>Product List</strong></td>
     <td align="center"><strong>Product Detail</strong></td>
-    <td align="center"><strong>Cart</strong></td>
-    <td align="center"><strong>Profile</strong></td>
+    <td align="center"><strong>Product Info</strong></td>
   </tr>
   <tr>
+    <td><img src="assets/screenshots/product_list.jpg" width="200"/></td>
     <td><img src="assets/screenshots/product_detail.jpg" width="200"/></td>
     <td><img src="assets/screenshots/product_info.jpg" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Cart</strong></td>
+    <td align="center"><strong>Checkout</strong></td>
+    <td align="center"><strong>Payment</strong></td>
+  </tr>
+  <tr>
     <td><img src="assets/screenshots/cart_screen.jpg" width="200"/></td>
+    <td><img src="assets/screenshots/checkout_screen.jpg" width="200"/></td>
+    <td><img src="assets/screenshots/payment_screen.jpg" width="200"/></td>
+  </tr>
+  <tr>
+    <td align="center"><strong>Order History</strong></td>
+    <td align="center"><strong>Profile</strong></td>
+    <td align="center"><strong>Edit Profile</strong></td>
+  </tr>
+  <tr>
+    <td><img src="assets/screenshots/order_history.jpg" width="200"/></td>
+    <td><img src="assets/screenshots/profile_screen.jpg" width="200"/></td>
+    <td><img src="assets/screenshots/edit-proflie.jpg" width="200"/></td>
   </tr>
 </table>
 
@@ -73,26 +93,18 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 ```
 lib/
 ├── main.dart
-├── app/
-│   ├── routes/
-│   └── theme/
-├── features/
-│   ├── auth/
-│   ├── home/
-│   ├── products/
-│   ├── cart/
-│   ├── wishlist/
-│   ├── orders/
-│   └── profile/
-├── shared/
-│   ├── widgets/
-│   ├── models/
-│   └── utils/
-└── services/
-    ├── api_service.dart
-    └── storage_service.dart
+├── firebase_options
+├── src/
+│   ├── app/
+│   ├── common/
+│   ├── features/
+│   ├── services/
+│   ├── test/
+│   └── wishlist/
 
+       
 assets/
+├── fonts/
 ├── images/
 └── screenshots/
 ```
@@ -162,29 +174,10 @@ flutter build ios --release
 
 ---
 
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these steps:
-
-1. Fork the repository
-2. Create a new branch — `git checkout -b feature/your-feature-name`
-3. Commit your changes — `git commit -m 'Add some feature'`
-4. Push to the branch — `git push origin feature/your-feature-name`
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
 ## 👨‍💻 Author
 
-**Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [your-linkedin](https://linkedin.com/in/your-profile)
+**Jaya Yadav**
+- GitHub: [jayayadav25](https://github.com/jayayadav25)
 
 ---
 
