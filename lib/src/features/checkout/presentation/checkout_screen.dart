@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../common/styles/colors.dart';
+import '../../../core/models/address_model.dart';
 import '../../address/provider/address_provider.dart';
 import '../../cart/providers/cart_providers.dart';
 import '../provider/checkout_provider.dart';
@@ -16,11 +17,45 @@ import '../widgets/delivery_timeline.dart';
 import '../widgets/order_item_section.dart';
 import '../widgets/price_card.dart';
 
-class CheckoutScreen extends ConsumerWidget {
+// class CheckoutScreen extends ConsumerWidget {
+//   const CheckoutScreen({super.key});
+class CheckoutScreen extends ConsumerStatefulWidget {
   const CheckoutScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref,) {
+  ConsumerState<CheckoutScreen> createState() =>
+      _CheckoutScreenState();
+}
+
+class _CheckoutScreenState
+    extends ConsumerState<CheckoutScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    ref.listenManual<AsyncValue<List<AddressModel>>>(
+      addressProvider,
+          (previous, next) {
+        next.whenData((addresses) {
+          if (addresses.isEmpty) {
+            return;
+          }
+
+          final selected =
+          ref.read(selectedAddressProvider);
+
+          if (selected == null) {
+            ref
+                .read(selectedAddressProvider.notifier)
+                .state = addresses.first;
+          }
+        });
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cart = ref.watch(cartProvider).value ?? [];
     final addressAsync = ref.watch(addressProvider);
     final selectedAddress = ref.watch(selectedAddressProvider);
@@ -62,8 +97,21 @@ class CheckoutScreen extends ConsumerWidget {
             children: [
               const CheckoutHeader(),
               const SizedBox(height: 12),
-              // Address
+
+              // ADDRESS
               addressAsync.when(
+                loading: () {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+
+                error: (error, stackTrace) {
+                  return const Text(
+                    'Failed to load address',
+                  );
+                },
+
                 data: (addresses) {
                   if (addresses.isEmpty) {
                     return AddAddressCard(
@@ -75,23 +123,49 @@ class CheckoutScreen extends ConsumerWidget {
                     );
                   }
 
-                  if (selectedAddress == null) {
-                    Future.microtask(() {
-                      ref.read(selectedAddressProvider.notifier,).state = addresses.first;});
-                  }
                   return AddressSection(
-                    address: selectedAddress ?? addresses.first,
+                    address:
+                    selectedAddress ??
+                        addresses.first,
+
                     onChange: () {
-                      context.push('/addresses',);
+                      context.push(
+                        '/addresses',
+                      );
                     },
                   );
                 },
-
-                loading: () => const Center(
-                  child: CircularProgressIndicator(),),
-                error: (_, __) =>
-                const Text('Failed to load address',),
               ),
+              // // Address
+              // addressAsync.when(
+              //   data: (addresses) {
+              //     if (addresses.isEmpty) {
+              //       return AddAddressCard(
+              //         onTap: () {
+              //           context.push(
+              //             '/addresses/add',
+              //           );
+              //         },
+              //       );
+              //     }
+              //
+              //     // if (selectedAddress == null) {
+              //     //   Future.microtask(() {
+              //     //     ref.read(selectedAddressProvider.notifier,).state = addresses.first;});
+              //     // }
+              //     return AddressSection(
+              //       address: selectedAddress ?? addresses.first,
+              //       onChange: () {
+              //         context.push('/addresses',);
+              //       },
+              //     );
+              //   },
+              //
+              //   loading: () => const Center(
+              //     child: CircularProgressIndicator(),),
+              //   error: (_, __) =>
+              //   const Text('Failed to load address',),
+              // ),
 
               const SizedBox(height: 10),
 

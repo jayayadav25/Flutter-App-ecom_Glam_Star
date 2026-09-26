@@ -1,9 +1,12 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../common/styles/app_button_styles.dart';
 import '../../auth/providers/auth_controller.dart';
 import '../../cart/providers/cart_providers.dart';
+import '../../notifications/providers/notification_setting_provider.dart';
+import '../../notifications/services/notification_service.dart';
 import '../../orders/providers/order_history_provider.dart';
 import '../../wishlist/provider/wishlist_providers.dart';
 import '../providers/profile_providers.dart';
@@ -16,6 +19,7 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref,) {
     final userAsync = ref.watch(currentUserProvider);
+    final notificationsEnabled = ref.watch(notificationEnabledProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       body: SafeArea(
@@ -32,7 +36,7 @@ class ProfileScreen extends ConsumerWidget {
             }
 
             return SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
+            //  physics: NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.all(20),
               child: Column(
                 children: [
@@ -63,17 +67,71 @@ class ProfileScreen extends ConsumerWidget {
 
                   const SizedBox(height: 10),
 
-         // settings
-           // const SizedBox(height: 14),
-           //  ProfileTile(
-           //    title: 'Notifications',
-           //    icon: Icons.notifications_none,
-           //    trailing: Switch( value: true,
-           //      onChanged: (_) {},
-           //    ),
-           //    onTap: () {},
-           //  ),
-            // const SizedBox(height: 16),
+                 // settings
+                  ProfileTile(
+                    title: 'Notifications',
+                    icon: Icons.notifications_none,
+
+                    trailing: Switch(
+                      value: notificationsEnabled,
+                      onChanged: (value) async {
+                        ref
+                            .read(
+                          notificationEnabledProvider.notifier,
+                        )
+                            .state = value;
+
+                        if (value) {
+
+                          await FirebaseMessaging.instance
+                              .subscribeToTopic(
+                            'offers',
+                          );
+
+                          await FirebaseMessaging.instance
+                              .subscribeToTopic(
+                            'orders',
+                          );
+
+                          await FirebaseMessaging.instance
+                              .subscribeToTopic(
+                            'shipping',
+                          );
+
+                        } else {
+
+                          await FirebaseMessaging.instance
+                              .unsubscribeFromTopic(
+                            'offers',
+                          );
+
+                          await FirebaseMessaging.instance
+                              .unsubscribeFromTopic(
+                            'orders',
+                          );
+
+                          await FirebaseMessaging.instance
+                              .unsubscribeFromTopic(
+                            'shipping',
+                          );
+                        }
+                      },
+                    ),
+
+                    onTap: () {
+                      context.push('/notifications');
+                    },
+                  ),
+         //   const SizedBox(height: 14),
+         //    ProfileTile(
+         //      title: 'Notifications',
+         //      icon: Icons.notifications_none,
+         //      trailing: Switch( value: true,
+         //        onChanged: (_) {},
+         //      ),
+         //      onTap: () {},
+         //    ),
+            const SizedBox(height: 16),
 
             // ProfileTile(
             //   title: 'Dark Mode',

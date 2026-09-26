@@ -22,8 +22,8 @@ class PriceDetailsCard extends StatelessWidget {
     final productDiscount = mrpTotal - sellingTotal;
     final orderTotal = sellingTotal - couponDiscount;
     final int completedOrders = 1;
-    final bool isFree = completedOrders < 4;
-    final double convenienceFee = isFree ? 0 : 50;
+   // final bool isFree = completedOrders < 4;
+   // final double convenienceFee = isFree ? 0 : 50;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CheckoutBottomBar
-    extends StatelessWidget {
+class CheckoutBottomBar extends ConsumerWidget {
 
   final double total;
   final VoidCallback onTap;
@@ -13,14 +13,11 @@ class CheckoutBottomBar
   });
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       padding: const EdgeInsets.all(16),
-
       decoration: const BoxDecoration(
         color: Colors.white,
-
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -32,27 +29,15 @@ class CheckoutBottomBar
       child: SafeArea(
         child: Row(
           children: [
-
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                CrossAxisAlignment.start,
-
-                mainAxisSize:
-                MainAxisSize.min,
-
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-
-                  const Text(
-                    'Total Amount',
-                  ),
-
-                  Text(
-                    '₹${total.toStringAsFixed(0)}',
-
+                  const Text('Total Amount',),
+                  Text('₹${total.toStringAsFixed(0)}',
                     style: const TextStyle(
-                      fontWeight:
-                      FontWeight.bold,
+                      fontWeight: FontWeight.bold,
 
                       fontSize: 20,
                     ),

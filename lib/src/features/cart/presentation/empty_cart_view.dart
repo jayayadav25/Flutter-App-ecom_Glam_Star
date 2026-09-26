@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:firebase_mastery_app/src/common/styles/text_styles.dart';
 import 'package:firebase_mastery_app/widgets/images.dart';
 import 'package:flutter/material.dart';

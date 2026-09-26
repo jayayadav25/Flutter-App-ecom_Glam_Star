@@ -4,37 +4,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class PriceCard extends ConsumerWidget {
 
   final double actualPrice;
-
   final double sellingPrice;
-
   final double shippingFee;
-
   final double couponDiscount;
-
-
   final double total;
 
-  const PriceCard({
-    super.key,
-
+  const PriceCard({super.key,
     required this.actualPrice,
-
     required this.sellingPrice,
-
     required this.shippingFee,
-
     required this.couponDiscount,
-
-
     required this.total,
   });
 
   /// TOTAL SAVED
   double get totalSaved {
-
-    return
-      (actualPrice - sellingPrice)
-          + couponDiscount;
+    return (actualPrice - sellingPrice) + couponDiscount;
   }
 
   Widget priceRow({
@@ -42,9 +27,7 @@ class PriceCard extends ConsumerWidget {
     required String value,
 
     bool bold = false,
-
     bool green = false,
-
     bool strike = false,
   }) {
 
@@ -55,44 +38,23 @@ class PriceCard extends ConsumerWidget {
 
       child: Row(
         children: [
-
           Text(
             title,
-
             style: TextStyle(
               fontSize: 14,
-
-              fontWeight:
-              bold
-                  ? FontWeight.bold
-                  : FontWeight.w500,
-
-              color:
-              Colors.grey.shade800,
+              fontWeight: bold ? FontWeight.bold : FontWeight.w500,
+              color: Colors.grey.shade800,
             ),
           ),
 
           const Spacer(),
 
-          Text(
-            value,
-
+          Text(value,
             style: TextStyle(
               fontSize: 14,
-
-              color: green
-                  ? Colors.green
-                  : Colors.black,
-
-              fontWeight:
-              bold
-                  ? FontWeight.bold
-                  : FontWeight.w600,
-
-              decoration:
-              strike
-                  ? TextDecoration.lineThrough
-                  : null,
+              color: green ? Colors.green : Colors.black,
+              fontWeight: bold ? FontWeight.bold : FontWeight.w600,
+              decoration: strike ? TextDecoration.lineThrough : null,
             ),
           ),
         ],
@@ -102,48 +64,34 @@ class PriceCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     return Container(
       padding: const EdgeInsets.all(18),
-
       decoration: BoxDecoration(
         color: Colors.white,
-
-        borderRadius:
-        BorderRadius.circular(20),
-
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color:
-            Colors.black.withOpacity(0.05),
-
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 20,
-
             offset: const Offset(0, 8),
           ),
         ],
       ),
 
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
-
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-          /// TITLE
+          // TITLE
           const Text(
             'Price Details',
-
             style: TextStyle(
               fontSize: 16,
-
               fontWeight: FontWeight.bold,
             ),
           ),
 
           const SizedBox(height: 22),
-
-          /// ACTUAL PRICE
+          // ACTUAL PRICE
           priceRow(
             title: 'Actual Price',
 
@@ -153,7 +101,7 @@ class PriceCard extends ConsumerWidget {
             strike: true,
           ),
 
-          /// SELLING PRICE
+          // SELLING PRICE
           priceRow(
             title: 'Selling Price',
 
@@ -161,7 +109,7 @@ class PriceCard extends ConsumerWidget {
             '₹${sellingPrice.toStringAsFixed(0)}',
           ),
 
-          /// PRODUCT SAVINGS
+          // PRODUCT SAVINGS
           priceRow(
             title: 'Product Discount',
 
@@ -171,7 +119,7 @@ class PriceCard extends ConsumerWidget {
             green: true,
           ),
 
-          /// COUPON DISCOUNT
+          // COUPON DISCOUNT
           if (couponDiscount > 0)
 
             priceRow(
@@ -183,7 +131,7 @@ class PriceCard extends ConsumerWidget {
               green: true,
             ),
 
-          // /// OFFER DISCOUNT
+          // // OFFER DISCOUNT
           // if (offerDiscount > 0)
           //
           //   priceRow(
@@ -195,49 +143,36 @@ class PriceCard extends ConsumerWidget {
           //     green: true,
           //   ),
 
-          /// SHIPPING
+          // SHIPPING
           priceRow(
             title: 'Convenience Fee',
 
-            value:
-            shippingFee == 0
-                ? 'FREE'
-                : '₹${shippingFee.toStringAsFixed(0)}',
-
+            value: shippingFee == 0
+                ? 'FREE' : '₹${shippingFee.toStringAsFixed(0)}',
             green: shippingFee == 0,
           ),
 
-          const Divider(
-            height: 30,
-          ),
+          const Divider(height: 30,),
 
-          /// TOTAL
+          // TOTAL
           priceRow(
             title: 'Total Amount',
-
-            value:
-            '₹${total.toStringAsFixed(0)}',
-
+            value: '₹${total.toStringAsFixed(0)}',
             bold: true,
           ),
-
           const SizedBox(height: 14),
 
-          /// SAVINGS CONTAINER
+          // SAVINGS CONTAINER
           Container(
             width: double.infinity,
-
             padding: const EdgeInsets.symmetric(
               horizontal: 14,
               vertical: 12,
             ),
 
             decoration: BoxDecoration(
-              color:
-              Colors.green.withOpacity(0.08),
-
-              borderRadius:
-              BorderRadius.circular(14),
+              color: Colors.green.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(14),
             ),
 
             child: Text(
@@ -245,9 +180,7 @@ class PriceCard extends ConsumerWidget {
 
               style: const TextStyle(
                 color: Colors.green,
-
                 fontWeight: FontWeight.w700,
-
                 fontSize: 13,
               ),
             ),

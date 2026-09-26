@@ -19,20 +19,6 @@ class OrderSuccessScreen extends ConsumerWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Container(
-              //   width: 140,
-              //   height: 140,
-              //   decoration: BoxDecoration(
-              //     color: Colors.green.shade50,
-              //     shape: BoxShape.circle,
-              //   ),
-              //   child: const Icon(
-              //     Icons.check,
-              //     size: 70,
-              //     color: Colors.green,
-              //   ),
-              // ),
-
               Image.asset(
                 AppImages.order_success,
                 width: 325,

@@ -21,6 +21,7 @@ import '../features/checkout/presentation/checkout_screen.dart';
 import '../features/checkout/presentation/order_failed_screen.dart';
 import '../features/checkout/presentation/order_success_screen.dart';
 import '../features/checkout/presentation/payment_screen.dart';
+import '../features/notifications/presentation/notification_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/orders/presentation/order_detail_screen.dart';
 import '../features/orders/presentation/tracking_screen.dart';
@@ -232,7 +233,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-
+      GoRoute(
+        path: '/notifications',
+        name: 'notifications',
+        builder: (_, __) =>
+        const NotificationScreen(),
+      ),
 
     ],
   );

@@ -21,6 +21,7 @@ import '../../../core/models/payment_method_model.dart';
 class PaymentScreen extends ConsumerWidget {
   const PaymentScreen({super.key});
 
+
   @override
   Widget build(BuildContext context, WidgetRef ref,) {
     final checkout = ref.watch(checkoutProvider);
@@ -63,8 +64,7 @@ class PaymentScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
-                              'Available Offers',
+                            const Text('Available Offers',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 22,
@@ -148,31 +148,23 @@ class PaymentScreen extends ConsumerWidget {
               const Text(
                 'Choose Payment Method',
 
-                style:
-                AppTextStyles.titleLarge,
+                style: AppTextStyles.titleLarge,
               ),
 
               const SizedBox(height: 20),
 
               PaymentMethodTile(
-                method:
-                PaymentMethods.upi,
-
-                child:
-                const UpiPaymentForm(),
+                method: PaymentMethods.upi,
+                child: const UpiPaymentForm(),
               ),
 
               PaymentMethodTile(
-                method:
-                PaymentMethods.card,
-
-                child:
-                const CardPaymentForm(),
+                method: PaymentMethods.card,
+                child: const CardPaymentForm(),
               ),
 
               PaymentMethodTile(
-                method:
-                PaymentMethods.cod,
+                method: PaymentMethods.cod,
               ),
 
               const SizedBox(height: 40),
@@ -233,7 +225,19 @@ class PaymentScreen extends ConsumerWidget {
                   onTap: () async {
                     final address = ref.read(selectedAddressProvider,);
                     final cart = ref.read(cartProvider,).value ?? [];
+                    final selectedPayment = checkout.selectedPayment;
                     if (address == null) {
+                      return;
+                    }
+                    if (selectedPayment == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Please select a payment method',
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                       return;
                     }
                     try {

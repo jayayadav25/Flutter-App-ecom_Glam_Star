@@ -57,7 +57,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  //  final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color(0xFFF8F7F4),
       body: SafeArea(

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../notifications/services/notification_service.dart';
+
 abstract class AuthRepository {
   Future<fb.User?> signIn(String email, String password);
   Future<fb.User?> signUp(String email, String password, String name);
@@ -21,13 +23,31 @@ class FirebaseAuthRepository implements AuthRepository {
 
   // Email password login
 
+  //@override
+  // Future<fb.User?> signIn(String email, String password) async {
+  //   final cred = await firebaseAuth.signInWithEmailAndPassword(
+  //     email: email,
+  //     password: password,
+  //   );
+  //   return cred.user;
+  // }
   @override
-  Future<fb.User?> signIn(String email, String password) async {
+  Future<fb.User?> signIn(String email, String password,) async {
     final cred = await firebaseAuth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return cred.user;
+
+    final user = cred.user;
+
+    if (user != null) {
+      await NotificationService.instance
+          .saveNotificationToken(
+        //user.uid,
+      );
+    }
+
+    return user;
   }
 
 
@@ -44,52 +64,86 @@ class FirebaseAuthRepository implements AuthRepository {
     if (user == null) return null;
 
     // Save user profile in Firestore
-    await firestore.collection('users').doc(user.uid).set({
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .set({
       'uid': user.uid,
       'name': name,
       'email': email,
       'profilePic': null,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt':
+      FieldValue.serverTimestamp(),
     });
+
+    await NotificationService.instance
+        .saveNotificationToken(
+      //user.uid,
+    );
 
     return user;
   }
+  //   await firestore.collection('users').doc(user.uid).set({
+  //     'uid': user.uid,
+  //     'name': name,
+  //     'email': email,
+  //     'profilePic': null,
+  //     'createdAt': FieldValue.serverTimestamp(),
+  //   });
+  //
+  //   return user;
+  // }
 
 
   // Google signin + save user in firestore (only first time)
 
   @override
   Future<fb.User?> signInWithGoogle() async {
-
     final googleUser = await googleSignIn.signIn();
-
     if (googleUser == null) return null;
-
     final auth = await googleUser.authentication;
-
     final credential = fb.GoogleAuthProvider.credential(
       accessToken: auth.accessToken,
       idToken: auth.idToken,
     );
-
     final cred = await firebaseAuth.signInWithCredential(credential);
-
     final user = cred.user;
     if (user == null) return null;
-
     final doc = await firestore.collection('users').doc(user.uid).get();
-
     if (!doc.exists) {
-      await firestore.collection('users').doc(user.uid).set({
+      await firestore
+          .collection('users')
+          .doc(user.uid)
+          .set({
         'uid': user.uid,
-        'name': user.displayName ?? "",
-        'email': user.email ?? "",
-        'profilePic': user.photoURL,
-        'createdAt': FieldValue.serverTimestamp(),
+        'name':
+        user.displayName ?? "",
+        'email':
+        user.email ?? "",
+        'profilePic':
+        user.photoURL,
+        'createdAt':
+        FieldValue.serverTimestamp(),
       });
     }
 
+    await NotificationService.instance
+        .saveNotificationToken(
+     // user.uid,
+    );
+
     return user;
+    // if (!doc.exists) {
+    //   await firestore.collection('users').doc(user.uid).set({
+    //     'uid': user.uid,
+    //     'name': user.displayName ?? "",
+    //     'email': user.email ?? "",
+    //     'profilePic': user.photoURL,
+    //     'createdAt': FieldValue.serverTimestamp(),
+    //   });
+    // }
+    //
+    // return user;
   }
 
   // Logout

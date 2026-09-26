@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/models/payment_method_model.dart';
+
 class PaymentSessionState {
   final String? selectedMethod;
   final String upiId;
@@ -106,4 +108,7 @@ final paymentSessionProvider = StateNotifierProvider<PaymentSessionNotifier, Pay
   },
 );
 
-final selectedPaymentMethodProvider = StateProvider<String?>((ref) => null,);
+final selectedPaymentMethodProvider =
+StateProvider<String?>((ref) => PaymentMethods.cod.id);
+
+//final selectedPaymentMethodProvider = StateProvider<String?>((ref) => null,);

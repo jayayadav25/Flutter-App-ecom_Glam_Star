@@ -3,6 +3,7 @@ import 'package:firebase_mastery_app/src/app/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../features/auth/providers/auth_state_provider.dart';
+import '../features/notifications/services/notification_navigation.dart';
 import 'router.dart';
 
 class App extends ConsumerWidget {
@@ -15,6 +16,7 @@ class App extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     return authState.when(
       data: (_) {
+        NotificationNavigation.initialize(router);
         return MaterialApp.router(
           title: 'Glam Star',
           debugShowCheckedModeBanner: false,

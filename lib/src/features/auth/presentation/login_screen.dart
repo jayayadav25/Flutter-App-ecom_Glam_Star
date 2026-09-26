@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../common/styles/text_styles.dart';
+import '../../notifications/services/notification_service.dart';
 import '../providers/auth_controller.dart';
 import '../providers/auth_providers.dart' show authInProgressProvider;
 
@@ -39,6 +41,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final state = ref.read(authControllerProvider);
 
     if (state.user != null) {
+      await NotificationService.instance.saveNotificationToken();
+      await NotificationService.instance.refreshToken();
+      await FirebaseMessaging.instance.subscribeToTopic('offers',);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('logged_in', true);
       if (mounted) context.go('/home');
@@ -58,15 +63,39 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       final user = FirebaseAuth.instance.currentUser;
       ref.read(authInProgressProvider.notifier).state = false;
       print("Current User: $user");
-      if (user != null && mounted) {
-        context.go('/home');
+      if (user != null) {
+        await NotificationService.instance.saveNotificationToken();
+        await NotificationService.instance.refreshToken();
+        await FirebaseMessaging.instance.subscribeToTopic('offers',);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('logged_in', true,);
+        if (mounted) {
+          context.go('/home');
+        }
       }
-
     } catch (e) {
+      ref.read(authInProgressProvider.notifier).state = false;
       print("GOOGLE LOGIN UI ERROR:");
       print(e);
     }
   }
+
+  // Future<void> _googleSignIn() async {
+  //   try {
+  //     ref.read(authInProgressProvider.notifier).state = true;
+  //     await ref.read(authControllerProvider.notifier).signInWithGoogle();
+  //     final user = FirebaseAuth.instance.currentUser;
+  //     ref.read(authInProgressProvider.notifier).state = false;
+  //     print("Current User: $user");
+  //     if (user != null && mounted) {
+  //       context.go('/home');
+  //     }
+  //
+  //   } catch (e) {
+  //     print("GOOGLE LOGIN UI ERROR:");
+  //     print(e);
+  //   }
+  // }
 
 
   @override

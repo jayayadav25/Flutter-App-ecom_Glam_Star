@@ -18,8 +18,11 @@ class OrderModel {
   final String status;
   final String deliveryStatus;
   // PAYMENT
-  final String paymentMethod;
-  final String paymentStatus;
+  final String? paymentId;
+  final String? razorpayOrderId;
+  final String? razorpaySignature;
+ final String paymentMethod;
+ final String paymentStatus;
   // DATE
   final DateTime createdAt;
   // ADDRESS
@@ -41,8 +44,11 @@ class OrderModel {
     required this.totalAmount,
     required this.status,
     required this.deliveryStatus,
-    required this.paymentMethod,
-    required this.paymentStatus,
+    this.paymentId,
+    this.razorpayOrderId,
+    this.razorpaySignature,
+   required this.paymentMethod,
+   required this.paymentStatus,
     required this.createdAt,
     required this.address,
     required this.items,
@@ -94,6 +100,9 @@ class OrderModel {
       deliveryStatus: map['deliveryStatus'] ?? 'Placed',
 
       // PAYMENT
+      paymentId: map['paymentId'],
+      razorpayOrderId: map['razorpayOrderId'],
+      razorpaySignature: map['razorpaySignature'],
       paymentMethod: map['paymentMethod'] ?? '',
       paymentStatus: map['paymentStatus'] ?? '',
 
@@ -123,6 +132,9 @@ class OrderModel {
       'totalAmount': totalAmount,
       'status': status,
       'deliveryStatus': deliveryStatus,
+      'paymentId': paymentId,
+      'razorpayOrderId': razorpayOrderId,
+      'razorpaySignature': razorpaySignature,
       'paymentMethod': paymentMethod,
       'paymentStatus': paymentStatus,
       'createdAt': FieldValue.serverTimestamp(),

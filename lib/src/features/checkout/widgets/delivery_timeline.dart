@@ -19,8 +19,7 @@ class DeliveryTimeline extends ConsumerWidget {
         BoxShadow(
         color: Colors.black12,
         blurRadius: 18,
-        offset: const Offset(0, 8),
-        ),
+        offset: const Offset(0, 8),),
         ],
       ),
       child: Row(
@@ -40,9 +39,7 @@ class DeliveryTimeline extends ConsumerWidget {
                 Text('Estimated Delivery',
                   style: AppTextStyles.smallTitle
                 ),
-
                 const SizedBox(height: 6),
-
                 Text(
                   deliveryDate,
                 ),

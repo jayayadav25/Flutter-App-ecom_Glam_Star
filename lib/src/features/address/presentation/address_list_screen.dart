@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../provider/address_provider.dart';
-import '../widgets/address_card.dart';
+import '../widgets/address_Card.dart';
 import '../widgets/address_empty_state.dart';
 import '../widgets/address_loading_shimmer.dart';
 
@@ -13,6 +13,7 @@ class AddressListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref,) {
     final addressAsync = ref.watch(addressProvider);
+    final selectedAddress = ref.watch(selectedAddressProvider);
     return Scaffold(
       backgroundColor: const Color(0xFFF8F8F8),
       appBar: AppBar(
@@ -47,12 +48,23 @@ class AddressListScreen extends ConsumerWidget {
             separatorBuilder: (_, __) => const SizedBox(height: 16),
             itemBuilder: (_, index) {
               final address = addresses[index];
+              final isSelected = selectedAddress?.id == address.id;
+
               return AddressCard(
                 address: address,
-
+                isSelected: isSelected,
                 onTap: () {
-                  ref.read(selectedAddressProvider.notifier,).state = address;
-                  context.pop();
+                  ref.read(selectedAddressProvider.notifier,)
+                      .state = address;
+                  debugPrint(
+                    'Selected address: ${address.id}',
+                  );
+
+                  debugPrint(
+                    'Provider address: '
+                        '${ref.read(selectedAddressProvider)?.id}',
+                  );
+                       context.pop();
                 },
                 onEdit: () {
                   context.push('/addresses/edit', extra: address,);

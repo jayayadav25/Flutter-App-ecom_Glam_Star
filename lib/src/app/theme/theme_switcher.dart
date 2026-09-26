@@ -32,27 +32,6 @@ class ThemeSwitcherScreen extends ConsumerWidget {
             theme: AppThemeType.dark,
             selected: currentTheme == ThemeMode.dark,
           ),
-          // _tile(
-          //   context: context,
-          //   ref: ref,
-          //   label: "Gold Theme",
-          //   theme: AppThemeType.gold,
-          //   selected: currentTheme == ThemeMode.system,
-          // ),
-          // _tile(
-          //   context: context,
-          //   ref: ref,
-          //   label: "Purple Theme",
-          //   theme: AppThemeType.purple,
-          //   selected: false,
-          // ),
-          // _tile(
-          //   context: context,
-          //   ref: ref,
-          //   label: "Red Theme",
-          //   theme: AppThemeType.red,
-          //   selected: false,
-          // ),
         ],
       ),
     );

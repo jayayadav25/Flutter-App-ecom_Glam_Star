@@ -20,11 +20,8 @@ class LuxuryBottomBar extends ConsumerWidget {
 
     final selectedSize = ref.watch(selectedSizeProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
-    final isAlreadyInCart = ref.watch(cartProvider,)
-        .value?.any(
-              (e) => e.productId ==
-              product.productId.toString(),
-        ) ?? false;
+    final isAlreadyInCart = ref.watch(cartProvider,).value?.any((e) =>
+    e.productId == product.productId.toString(),) ?? false;
 
     return Container(
       padding: const EdgeInsets.all(16),

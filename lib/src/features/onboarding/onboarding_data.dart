@@ -4,7 +4,7 @@ import 'onboarding_model.dart';
 final onboardingData = [
 
   OnboardingModel(
-    image: 'assets/onboarding_1.jpg',
+    image: 'assets/onboarding_1.png',
     title: 'Luxury Fashion',
     description: 'Explore premium outfits crafted for modern elegance and timeless style.',
   ),

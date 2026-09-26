@@ -32,7 +32,7 @@ class AddressDetailsScreen extends StatelessWidget {
               Text(address.phone),
               const SizedBox(height: 14),
               Text(address.addressLine1,),
-              Text(address.addressLine2 ?? ''),
+              Text(address.addressLine2),
               Text("${address.city}, ${address.state}",),
               Text(address.zipCode,),
             ],
