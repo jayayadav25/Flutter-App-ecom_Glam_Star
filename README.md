@@ -61,6 +61,7 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 - ❤️ **Wishlist** — Save products for later
 - 👤 **User Authentication** — Sign up, login, and profile management
 - 📋 **Order History** — Track past orders and their statuses
+- 🔔 **Push Notifications** — Firebase Cloud Messaging for receiving notifications
 - 📱 **Responsive UI** — Optimized for various screen sizes
 
 ---
@@ -70,7 +71,6 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 | Feature | Status | Notes |
 |---|---|---|
 | Payment Gateway | ❌ Pending | Razorpay / Stripe integration planned |
-| Push Notifications | 🔄 In Progress | FCM setup pending |
 | Product Reviews | 🔄 In Progress | UI done, backend pending |
 
 ---
@@ -85,8 +85,21 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 | Local Storage | SharedPreferences / Hive |
 | Navigation | GoRouter / Navigator 2.0 |
 | Image Loading | cached_network_image |
-
+| Push Notifications | Firebase Cloud Messaging (FCM) |
 ---
+
+🔔 Push Notifications
+
+GlamStar uses Firebase Cloud Messaging (FCM) to support push notifications.
+
+The notification system handles:
+
+📲 Receiving push notifications
+🔔 Foreground notifications
+🔄 Background notification handling
+🚀 Notification handling when the app is opened from a notification
+📱 Firebase Messaging initialization
+🔑 FCM device token handling
 
 ## 📁 Project Structure
 
