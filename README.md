@@ -66,15 +66,6 @@ A full-featured e-commerce mobile application built with Flutter, designed to de
 
 ---
 
-## 🚧 Not Yet Implemented
-
-| Feature | Status | Notes |
-|---|---|---|
-| Payment Gateway | ❌ Pending | Razorpay / Stripe integration planned |
-| Product Reviews | 🔄 In Progress | UI done, backend pending |
-
----
-
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
